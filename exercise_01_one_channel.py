@@ -30,7 +30,7 @@ if __name__ == "__main__":
     
 
     # Set the experiment parameters ###########################################
-    eeg_buffer_secs = 40  # Size of the EEG data buffer used for plotting the 
+    eeg_buffer_secs = 15  # Size of the EEG data buffer used for plotting the 
                           # signal (in seconds) 
     win_test_secs = 1     # Length of the window used for computing the features 
                           # (in seconds)

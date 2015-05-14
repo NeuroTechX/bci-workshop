@@ -88,14 +88,11 @@ def compute_feature_vector(eegdata, Fs):
     """Extract the features from the EEG
         Inputs:
           eegdata: array of dimension [number of samples, number of channels]
-          params: information about the data acquisition device being
-          [Optional] currentClass: (int) class of raw data
-          [Optional] plotPSD: (bool) if true, plot the PSD of the preprocessed data
+          Fs: sampling frequency of eegdata
+
         Outputs:
           feature_vector: [number of features points; number of different features
-          featNames: list containing the names of all the computed features
-          logPSD: the logarithm of the PSD, as computed for further feature
-                  extraction (for debugging purposes)
+
     """
     #Delete last column (Status)
     eegdata = np.delete(eegdata, -1 , 1)    
@@ -121,53 +118,19 @@ def compute_feature_vector(eegdata, Fs):
     # Theta 4-8
     ind_theta, = np.where((f>=4) & (f<=8))
     meanTheta = np.mean(PSD[ind_theta,:],axis=0)
-    # Low alpha 8-10
-    ind_alpha, = np.where((f>=8) & (f<=10)) 
-    meanLowAlpha = np.mean(PSD[ind_alpha,:],axis=0)
-    # Medium alpha?
-    ind_alpha, = np.where((f>=9) & (f<=11))
-    meanMedAlpha = np.mean(PSD[ind_alpha,:],axis=0)
-    # High alpha 10-12
-    ind_alpha, = np.where((f>=10) & (f<=12)) 
-    meanHighAlpha = np.mean(PSD[ind_alpha,:],axis=0)
-    # Low beta 12-21
-    ind_beta, = np.where((f>=12) & (f<=21))
-    meanLowBeta = np.mean(PSD[ind_beta,:],axis=0)
-    # High beta 21-30
-    ind_beta, = np.where((f>=21) & (f<=30))
-    meanHighBeta = np.mean(PSD[ind_beta,:],axis=0)
-    # Alpha 8 - 12
-    ind_alpha, = np.where((f>=8) & (f<=12))
+    # Alpha 8-12
+    ind_alpha, = np.where((f>=8) & (f<=12)) 
     meanAlpha = np.mean(PSD[ind_alpha,:],axis=0)
-    # High beta 21-30
-    ind_beta, = np.where((f>=12) & (f<=30))
+    # Beta 12-30
+    ind_beta, = np.where((f>=12) & (f<30))
     meanBeta = np.mean(PSD[ind_beta,:],axis=0)
     
+    feature_vector = np.concatenate((meanDelta, meanTheta, meanAlpha, meanBeta),
+                                    axis=0)
     
-    feature_vector = np.concatenate((meanDelta, meanTheta, meanAlpha, meanBeta),axis=0)
-    
-    feature_vector = np.concatenate((meanDelta, meanTheta, meanLowAlpha, meanHighAlpha, 
-                                     meanLowBeta, meanHighBeta, 
-                                     meanDelta/meanBeta, meanTheta/meanBeta,
-                                     meanAlpha/meanBeta, meanAlpha/meanTheta),axis=0)
-
-    # 3. Fill the array of features
-    #feature_vector[0] = np.mean(meanDelta)
-    #feature_vector[0] = np.mean(meanTheta)
-    #feature_vector[1] = np.mean(meanLowAlpha)
-    #feature_vector[2] = np.mean(meanMedAlpha)
-    #feature_vector[3] = np.mean(meanHighAlpha)
-    #feature_vector[4] = np.mean(meanLowBeta)
-    #feature_vector[5] = np.mean(meanHighBeta)
-    
-    #feature_vector[6] = (feature_vector[1]+feature_vector[2])/(feature_vector[3]+feature_vector[4])
-    #feature_vector[7] = feature_vector[0]/(feature_vector[3]+feature_vector[4])
-    #feature_vector[8] = feature_vector[0]/(feature_vector[4]+feature_vector[5])
-    
-    #featNames = ('theta','low_alpha_temp','high_alpha_temp','low_beta_front','high_beta_front','alpha/beta','theta/beta')
     feature_vector = np.log10(feature_vector)   
        
-    return feature_vector #, featNames, logPSD, f
+    return feature_vector
         
 def nextpow2(i):
         """ Find the next power of 2 for number i """
@@ -247,9 +210,7 @@ def feature_names(ch_names):
     ch_names: List with Electrode names
     """
     bands = ['pwr-delta', 'pwr-theta', 'pwr-alpha' ,'pwr-beta']
-    bands = ['pwr-delta', 'pwr-theta', 'pwr-low-alpha', 'pwr-high-alpha',
-             'pwr-low-beta', 'pwr-high-beta', 
-             'pwr-delta/beta', 'pwr-theta/beta', 'pwr-alpha/beta', 'pwr-alpha-theta']
+
     feat_names = []
     for band in bands:
         for ch in range(0,len(ch_names)-1):
