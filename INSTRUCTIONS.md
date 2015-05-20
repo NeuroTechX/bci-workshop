@@ -1,8 +1,8 @@
-# BCI workshop at Disctrict 3
+# BCI workshop at District 3
 
 This document provides instructions and explanations for completing the BCI workshop given by BCI Montréal in May 2015. Specifically, it will guide you through the installation of the necessary software, the configuration of the device we will use, and the two exercises that are at the core of this workshop.
 
-This workshop is intented for people with no or limited experience with Brain-Computer Interfaces (BCIs). The workshop will teach them the basic principles that are necessary to "hack" and develop new applications with BCIs: background on brain activity and brain activity measurement with EEG, structure of a BCI, feature extraction and machine learning. Two hands-on exercises will allow the participants to 1) visualize their EEG signals and some relevant features, and 2) experiment with a very simple BCI design. This should give the participants sufficient knowledge to understand the advantages and limitations of current BCIs, and to devise their own applications. 
+This workshop is intended for people with no or limited experience with Brain-Computer Interfaces (BCIs). The workshop will teach them the basic principles that are necessary to "hack" and develop new applications with BCIs: background on brain activity and brain activity measurement with EEG, structure of a BCI, feature extraction and machine learning. Two hands-on exercises will allow the participants to 1) visualize their EEG signals and some relevant features, and 2) experiment with a very simple BCI design. This should give the participants sufficient knowledge to understand the advantages and limitations of current BCIs, and to devise their own applications. 
 
 ## Installation of software for the workshop
 
@@ -31,7 +31,7 @@ To install Python 2.7 and the required packages, we suggest you download and ins
 
 #### 1.1 Installation with Anaconda
 
-1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (for Windows 64-bit, Python 2.7, size: 331M).
+1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (if your Windows version is 32-bit, make sure to download the 32-bit installer).
 2. Execute the installer.
 
 This installs Python, Spyder and all the packages we will need for the workshop (including scikit-learn and pyZMQ).
@@ -53,7 +53,7 @@ To install the SDK, download and execute the [Muse SDK Tools 3.4.1 installer for
 2. It can communicate with any of the following devices without requiring any modification: Muse, Emotiv EPOC, Neurosky Mindwave, OpenBCI, Neuroelectrics Enobio;
 3. It can stream EEG signals over a single computer or a network (or the Internet).
 
-MuLES is based on LabView, and is currently only available for Windows. Future releases might support other operating systems.
+MuLES is based on LabVIEW, and is currently only available for Windows. Future releases might support other operating systems.
 
 To install MuLES, download the [MuLES installer v1.3](https://github.com/MuSAELab/MuLES/releases) and follow the instructions given on the web page.
 
@@ -72,36 +72,40 @@ Now that your computer is set up to recognize the Muse, we will configure MuLES 
 1. Go to the MuLES installation directory (by default ```C:\Program Files (x86)\MuSAE_Lab\MuLES```).
 2. Open ```config.ini``` in a text editor.
 3. Under the section [DEVICE03], locate the ```EXTRA``` keyword.
-4. Change the value of the ```BTNAME``` parameter to the name of your Muse. For example, if your Muse's Bluetooth name is ```Muse-6AB1```, you would have the line ```EXTRA = "FS=220,#CH=4,DATA=ffffi,PRESET=14,BTNAME=Muse-6AB1,OSCPORT=5000"```
-5. Save and close the file.
+4. Change the value of the ```BTNAME``` parameter to the name of your Muse. For example, if your Muse's Bluetooth name is ```Muse-6AB1```, you would have the line ```EXTRA = "FS=220,#CH=4,DATA=ffffi,PRESET=14,BTNAME=Muse-6AB1,OSCPORT=5000"```.
+5. If you are working in a 32-bit version of Windows, you will need to change the value of the ```PATH``` keyword to indicate the correct path to ```muse-io.exe``` (should be similar to ```"/C/Program Files (x86)/Muse/muse-io.exe"```).
+6. Save and close the file.
 
 
 ### 5. Download the code for the workshop
 
-Download the folder...
+The code for the workshop is based on six Python scripts that you can find [here](https://github.com/hubertjb/bci_workshop).
+You can download everything as a ```.zip``` file using the button ![downloadzip](\fig\download_zip.jpg "Download zip button") on the right. You then need to unzip the folder on your computer.
+
+Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone git://github.com/hubertjb/bci_workshop.git``` in the command line.
 
 
 ## Exercise 1: A simple neurofeedback interface
 
 In this first exercise, we will learn how to visualize the raw EEG signals that come from the Muse inside a Python application. We will also extract and visualize basic features of the raw EEG signals. This will showcase a first basic use of a Brain-Computer Interface: a so-called neurofeedback interface.
 
-> Neurofeedback (NFB), also called neurotherapy or neurobiofeedback, is a type of biofeedback that uses real-time displays of brain activity—most commonly electroencephalography (EEG), to teach self-regulation of brain function. Typically, sensors are placed on the scalp to measure activity, with measurements displayed using video displays or sound.
+> Neurofeedback (also called neurotherapy or neurobiofeedback) uses real-time representation of brain-activity (as sound and visual effects) to teach users to control their brain activity.
 
 ### E1.1 Streaming data from the Muse
 
 1. Open MuLES (a shortcut should have been automatically added to your desktop, otherwise you can run it from the installation directory ```C:\Program Files (x86)\MuSAE_Lab\MuLES```).
 2. In the dropdown menu, choose ```MUSE Consumer FW```.
-3. Make sure the *Enable TCP Server* button is highlighted in green.
+3. Make sure the *Enable TCP Server* button is highlighted in green. You can also save the EEG data in a file by enabling the *Enable Logging* button. 
 4. Switch on the Muse by holding the button down for ~1 second. The light should start oscillating.
-5. Start streaming data from the Muse by clicking on the *Play* button. A command line window should appear giving details on the communication status.
+5. Start streaming data from the Muse by clicking on the *Play* button ![playbutton](\fig\play_button.jpg "MuLES play button"). A command line window should appear giving details on the Muse communication status.
 
 ### E1.2 Running the Python visualization script
 
 In order to examinate and play around with the code, we recommend you open the provided Python scripts in an IDE or a text editor. However, the script should run without any modification and can be launched from the command line by running ```python <script_name>.py``` in the appropriate folder.
 
 1. Open the script ```exercise_01_one_channel.py``` in Spyder (or your favorite IDE/text editor).
-2. Read the code - it is heavily commented - and modify the experiment parameters as you wish (line 32 to 48).
-3. When you feel confident about what the code does (or before), run the script. In Spyder, select a Python console on the bottom right of the screen, then click on the *Play* button on top of the editor.
+2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish (line 32 to 48).
+3. When you feel confident about what the code does (or before), run the script. In Spyder, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
 5. To stop the execution of the script, enter <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
 
@@ -216,21 +220,26 @@ Once your BCI framework is functional, you can start thinking about sending your
 Many different libraries can be used for that, beginning with standard TCP/IP communication implementations (e.g. Python's [socket](https://docs.python.org/2/library/socket.html) module).
 We suggest [pyZMQ](https://zeromq.github.io/pyzmq/), which allows simple communication between a Python application and any programming language supporting the [ZMQ](http://zeromq.org/) protocol.
 
-TODO: Provide more info on that part...
-
-For example, let's send our classifier decisions to a Processing script to create simple animations...
+For example, let's send our classifier decisions to a Processing script to create simple animations.
 
 ## Conclusion
 
-Blablabla
+
 
 
 ## References
 
-Blablabla
+### Tutorials and neurohacks
+- A blog with very cool and detailed posts about EEG/BCI hacking: [http://eeghacker.blogspot.ca/](http://eeghacker.blogspot.ca/)
+- The [neuralDrift](http://neuraldrift.net/), a neurogame based in MATLAB that exploits the same concept as was seen in this workshop: [https://github.com/hubertjb/neuraldrift](https://github.com/hubertjb/neuraldrift)
+- Series of introductory lectures on Brain-Computer Interfacing: [http://sccn.ucsd.edu/wiki/Introduction_To_Modern_Brain-Computer_Interface_Design](http://sccn.ucsd.edu/wiki/Introduction_To_Modern_Brain-Computer_Interface_Design)
+
 
 ## Authors
 
-Raymundo Cassani & Hubert Banville
+Hubert Banville & Raymundo Cassani
 
-Thanks to: [MuSAE Lab](http://musaelab.ca/), [District 3](http://d3center.ca/), [BCI Montréal](http://bcimontreal.org/), ...
+Thanks to the [MuSAE Lab](http://musaelab.ca/), [District 3](http://d3center.ca/) and [BCI Montréal](http://bcimontreal.org/).
+
+If you use code from this workshop please don't forget to follow the terms of the [MIT License](http://opensource.org/licenses/MIT).
+Also, please cite the following paper if you use [MuLES](https://github.com/MuSAELab/MuLES) for academic purposes: *Cassani, R., Banville, H., & Falk, T. H. (2015). MuLES: An Open Source EEG Acquisition and Streaming Server for Quick and Simple Prototyping and Recording. In Proceedings of the 20th International Conference on Intelligent User Interfaces Companion (pp. 9-12). ACM.*

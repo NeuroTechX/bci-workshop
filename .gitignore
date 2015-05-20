@@ -9,3 +9,6 @@
 
 # Markdown
 *.md~
+
+# Others
+.Rhistory
