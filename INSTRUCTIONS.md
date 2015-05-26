@@ -80,7 +80,7 @@ Now that your computer is set up to recognize the Muse, we will configure MuLES 
 ### 5. Download the code for the workshop
 
 The code for the workshop is based on six Python scripts that you can find [here](https://github.com/hubertjb/bci_workshop).
-You can download everything as a ```.zip``` file using the button ![downloadzip](\fig\download_zip.jpg "Download zip button") on the right. You then need to unzip the folder on your computer.
+You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
 
 Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone git://github.com/hubertjb/bci_workshop.git``` in the command line.
 
@@ -99,7 +99,7 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 4. Switch on the Muse by holding the button down for ~1 second. The light should start oscillating.
 5. Start streaming data from the Muse by clicking on the green *Play* button. A command line window should appear giving details on the Muse communication status.
 
-![playbutton](\fig\mules.png "MuLES GUI")
+![playbutton](fig/mules.png?raw=true "MuLES GUI")
 
 ### E1.2 Running the Python visualization script
 
@@ -109,7 +109,7 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
 5. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
 
-![ex1_figures](\fig\ex1_figures.png "Visualization in E1.2")
+![ex1_figures](fig/ex1_figures.png?raw=true "Visualization in E1.2")
 
 ### E1.3 Playing around
 
@@ -206,8 +206,8 @@ Let's try it now.
 6. When you hear a **third beep**, the classifier is trained and starts outputting decisions in the Python console: ```0``` when your eyes are open, and ```1``` when you close them. Additionally, a figure will display the decisions over a period of 30 seconds.
 7. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
 
-![ex1_figures](fig/ex2_figure.png?raw=true)
- "Visualization of decisions in E2.1"
+![ex1_figures](fig/ex2_figure.png?raw=true "Visualization of decisions in E2.1")
+
 ### E2.2 Playing around
 
 Here are some things we suggest you do to understand what the script does.
