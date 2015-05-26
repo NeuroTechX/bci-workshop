@@ -13,3 +13,6 @@ If for some reason you can't download/install the dependencies, please bring a U
 ## Authors
 
 Raymundo Cassani & Hubert Banville
+
+## License
+[MIT](http://opensource.org/licenses/MIT).

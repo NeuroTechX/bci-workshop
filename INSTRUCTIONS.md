@@ -97,17 +97,19 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 2. In the dropdown menu, choose ```MUSE Consumer FW```.
 3. Make sure the *Enable TCP Server* button is highlighted in green. You can also save the EEG data in a file by enabling the *Enable Logging* button. 
 4. Switch on the Muse by holding the button down for ~1 second. The light should start oscillating.
-5. Start streaming data from the Muse by clicking on the *Play* button ![playbutton](\fig\play_button.jpg "MuLES play button"). A command line window should appear giving details on the Muse communication status.
+5. Start streaming data from the Muse by clicking on the green *Play* button. A command line window should appear giving details on the Muse communication status.
+
+![playbutton](\fig\mules.png "MuLES GUI")
 
 ### E1.2 Running the Python visualization script
 
-In order to examinate and play around with the code, we recommend you open the provided Python scripts in an IDE or a text editor. However, the script should run without any modification and can be launched from the command line by running ```python <script_name>.py``` in the appropriate folder.
-
 1. Open the script ```exercise_01_one_channel.py``` in Spyder (or your favorite IDE/text editor).
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish (line 32 to 48).
-3. When you feel confident about what the code does (or before), run the script. In Spyder, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
+3. Run the script. In Spyder, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
-5. To stop the execution of the script, enter <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
+5. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
+
+![ex1_figures](\fig\ex1_figures.png "Visualization in E1.2")
 
 ### E1.3 Playing around
 
@@ -123,12 +125,14 @@ Run the script and look at the first figure (raw EEG visualization). What makes 
 In the first case, you can see that the first movements (blinking, etc.) strongly disturb the EEG signal. We call these **artifacts**. Some artifacts are so huge that they can completely obscure the actual EEG signal coming from your brain. We typically divide artifacts according to their source: *physiological artifacts* (caused by the electrical activity of the heart, muscles, movement of the eyes, etc.), and *motion artifacts* (caused by a relative displacement of the sensor and the skin).
 
 In the second case, you can see that different mental activities (e.g. imagining eating or talking) are not easily recognizable in the EEG signals. 
-First, this is because mental activity is distributed across the brain: for example, sensorimotor processing occurs on top of the brain, in the central cortex, while speech-related functions occurs at the sides of the brain, in the temporal cortex. Therefore, the 4 sensors on the Muse are not necessarily on the right "spot" to capture the relevant EEG signals.
-Second, the EEG signals are very, very, very noisy. Indeed, the electrical signals that we pick up on the scalp are smeared by the skull, muscles and skin. As you saw, eye balling the signals is often not enough to analyze brain activity. (That is why we need to extract features!)
+First, this is because mental activity is distributed across the brain: for example, sensorimotor processing occurs on top of the brain, in the central cortex, while speech-related functions occurs at the sides of the brain, in the temporal cortex. Therefore, the 4 sensors on the Muse are not necessarily on the right "spot" to capture those EEG signals.
+Second, the EEG signals are very, very, very noisy. Indeed, the electrical signals that we pick up on the scalp are smeared by the skull, muscles and skin. As you saw, eye balling the signals is often not enough to analyze brain activity. (That is why we need to extract descriptive characteristics from the signals: what we call features!)
 
 #### Visualizing your EEG features
 
-Since the raw EEG signals are not easy to read, we will extract some features that will hopefully be more insightful. The most often used features to describe EEG are frequency band powers.
+Since the raw EEG signals are not easy to read, we will extract **features** that will hopefully be more insightful. Features are simply a different representation, or an individual measurable property, of the EEG signal. Good features give clearer information about a phenomenon being observed.
+
+The most often used features to describe EEG are frequency band powers.
 
 1. Open the script ```bci_workshop_tools.py```.
 2. Locate the function ```compute_feature_vector()``` (line 87).
@@ -143,13 +147,15 @@ In EEG analysis, we typically look at ranges of frequencies, that we call *frequ
 - Beta  (16-31 Hz)
 - Gamma (> 31 Hz)
 
-We expect each band to reflect specific mental processes and activities. For example, we know that closing the eyes and relaxing provokes an increase in Alpha activity and a decrease in Beta activity, especially at the back of the head. We will try to reproduce this result now.
+These are the features that you visualized in E1.2 in Figure 2.
+
+We expect each band to reflect specific mental activities. For example, we know that closing the eyes and relaxing provokes an increase in Alpha band activity and a decrease in Beta band activity, especially at the back of the head. We will try to reproduce this result now.
 
 1. Open the script ```exercise_01_one_channel.py```.
 2. Change the value of the ```eeg_buffer_secs``` parameter to around 40.
 3. Run the script and look at the second figure.
-4. Keep your eyes open for 20 seconds (again, minize your movements).
-5. Close your eyes and relax for another 20 seconds (minize your movements).
+4. Keep your eyes open for 20 seconds (again, try to minimize your movements).
+5. Close your eyes and relax for another 20 seconds (minimize your movements).
 
 Do you see a difference between the first and the last 20-s windows for the Alpha and Beta features?
 
@@ -175,30 +181,32 @@ Other points you can consider to design better features:
 ## Exercise 2: A basic BCI
 
 In this second exercise, we will learn how to use an automatic algorithm to recognize somebody's mental states from their EEG.
-We will use a *classifier*: a classifier is an algorithm that, provided some data, learns to recognize patterns , and can then classify similar unseen information.
+We will use a *classifier*: a classifier is an algorithm that, provided some data, learns to recognize patterns, and can then classify similar unseen information.
 
-For example, let's say we have many [images of either cats or dogs that we want to classify](https://www.kaggle.com/c/dogs-vs-cats). A classifier would first require *training data*: in this case we could give the classifier 1000 pictures of cats that we identify as cats, and 1000 pictures of dogs that we identify as dogs. The classifier will then learn the patterns that make a picture a picture of a cat, or a picture of a dog. Once it is trained, the classifier can now output *decisions*: if we give it a new, unseen picture, it will try its best to correctly determine whether it's a cat or a dog in the picture.
+For example, let's say we have many [images of either cats or dogs that we want to classify](https://www.kaggle.com/c/dogs-vs-cats). A classifier would first require *training data*: in this case we could give the classifier 1000 pictures of cats that we identify as cats, and 1000 pictures of dogs that we identify as dogs. The classifier will then learn specific patterns to discriminate a dog from a cat. Once it is trained, the classifier can now output *decisions*: if we give it a new, unseen picture, it will try its best to correctly determine whether it's a cat or a dog in the picture.
 
 In a Brain-Computer Interface, we use classifiers to identify which type of mental task somebody is doing. For example, in the previous exercise, you saw that opening and closing your eyes modifies the features of the EEG signal. To use a classifier, we would need to proceed like this:
 
-1. Collect EEG data of you performing the two mental activities (eyes open vs. eyes closed).
-2. Input this labelled data to the classifier.
+1. Collect EEG data of you performing the two mental activities (eyes open and eyes closed).
+2. Input this data to the classifier, while specifying which part corresponds to each mental activity.
 3. *Train* the classifier.
-4. Use the classifier by giving it new EEG data, and asking for a decision on which mental activity this represents.
+4. Use the trained classifier by giving it new EEG data, and asking for a decision on which mental activity this represents.
 
-Brain-Computer Interfaces rely heavily on **machine learning**, the field devoted to building classifiers (and other cool stuff). You might have already understood why: in a typical EEG application we have a lot of features (e.g. many band powers) and the mental activity we want to classify is not easily recognizable.
+Brain-Computer Interfaces rely heavily on **machine learning**, the field devoted to building classifiers (and other cool stuff). You might have already understood why: in a typical EEG application we have several features (e.g. many band powers) and the mental activity we want to classify is not easily recognizable.
 
 Let's try it now.
 
 ### E2.1 Running the Python basic BCI script
 
 1. Open the script ```exercise_02.py```.
-2. Read the code - it is heavily commented - and modify the experiment parameters as you wish. You will see it's very similar to the code of Exercise 1, but with a few new sections.
-3. When you feel confident about what the code does (or again, before), run the script.
+2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish. You will see it's very similar to the code of Exercise 1, but with a few new sections.
+3. When you feel confident about what the code does, run the script.
 4. When you hear a **first beep**; keep your eyes open and concentrate (while minimizing your movements).
 5. When you hear a **second beep**; close your eyes and relax (while minimizing your movements).
-6. When you hear a **third beep**, the classifier is trained and starts outputting decisions in the Python console: ```0``` when your eyes are open, and ```1``` when you close them.
-7. To stop the execution of the script, enter <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
+6. When you hear a **third beep**, the classifier is trained and starts outputting decisions in the Python console: ```0``` when your eyes are open, and ```1``` when you close them. Additionally, a figure will display the decisions over a period of 30 seconds.
+7. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
+
+![ex1_figures](\fig\ex2_figure.png "Visualization of decisions in E2.1")
 
 ### E2.2 Playing around
 
@@ -224,8 +232,11 @@ For example, let's send our classifier decisions to a Processing script to creat
 
 ## Conclusion
 
+In this workshop, we saw 1) how to run a simple neurofeedback interface, and 2) use a basic brain-computer interface. To do so, we covered the basic principles behind the use of electroencephalography signals in modern BCI applications: properties of the raw EEG time series, extraction of band power features, physiological and motion artifacts, and machine learning-based classification of mental activities.
 
+We used the following tools in this workshop: the MuLES EEG server, the Python scripting language, and the Muse EEG headset. All the necessary scripts for this workshop are available [online](https://github.com/bcimontreal/bci_workshop) and their re-use is strongly encouraged. 
 
+Now is **your turn** to come up with inventive ways of using neurophysiological data! You can follow the pointers in the *References* section for inspiration.
 
 ## References
 
@@ -239,7 +250,7 @@ For example, let's send our classifier decisions to a Processing script to creat
 
 Hubert Banville & Raymundo Cassani
 
-Thanks to the [MuSAE Lab](http://musaelab.ca/), [District 3](http://d3center.ca/) and [BCI Montréal](http://bcimontreal.org/).
+Thanks to the [MuSAE Lab](http://musaelab.ca/), [District 3](http://d3center.ca/) and [BCI Montréal](http://bcimontreal.org/). Thanks also to Ana, Sydney, Rohit and William for initial feedback on the workshop. 
 
 If you use code from this workshop please don't forget to follow the terms of the [MIT License](http://opensource.org/licenses/MIT).
 Also, please cite the following paper if you use [MuLES](https://github.com/MuSAELab/MuLES) for academic purposes: *Cassani, R., Banville, H., & Falk, T. H. (2015). MuLES: An Open Source EEG Acquisition and Streaming Server for Quick and Simple Prototyping and Recording. In Proceedings of the 20th International Conference on Intelligent User Interfaces Companion (pp. 9-12). ACM.*
