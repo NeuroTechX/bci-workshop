@@ -206,7 +206,7 @@ Let's try it now.
 6. When you hear a **third beep**, the classifier is trained and starts outputting decisions in the Python console: ```0``` when your eyes are open, and ```1``` when you close them. Additionally, a figure will display the decisions over a period of 30 seconds.
 7. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
 
-![ex1_figures](\fig\ex2_figure.png "Visualization of decisions in E2.1")
+![ex1_figures](\fig\ex2_figure.png?raw=true "Visualization of decisions in E2.1")
 
 ### E2.2 Playing around
 
