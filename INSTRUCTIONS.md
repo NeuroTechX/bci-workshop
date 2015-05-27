@@ -37,7 +37,7 @@ To install Python 2.7 and the required packages, we suggest you download and ins
 This installs Python, Spyder and all the packages we will need for the workshop (including scikit-learn and pyZMQ).
 
 #### 1.2 Individual installation of Python and packages
-Alternatively, you can [download Python 2.7 independently](http://docs.python-guide.org/en/latest/starting/install/win/). Make sure to install ```pip``` (as explained [here]((http://docs.python-guide.org/en/latest/starting/install/win/))) and grab NumPy, matplotlib and scikit-learn by calling ```pip install <package_name>``` on the command line (or any other way, really). Make sure you have a text editor or IDE you can work with as well.
+Alternatively, you can [download Python 2.7 independently](http://docs.python-guide.org/en/latest/starting/install/win/). Make sure to install ```pip``` (as explained [here]((http://docs.python-guide.org/en/latest/starting/install/win/))) and grab NumPy, matplotlib and scikit-learn by calling ```pip install <package_name>``` on the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
 
 ### 2. Muse SDK
 
@@ -79,10 +79,10 @@ Now that your computer is set up to recognize the Muse, we will configure MuLES 
 
 ### 5. Download the code for the workshop
 
-The code for the workshop is based on six Python scripts that you can find [here](https://github.com/hubertjb/bci_workshop).
+The code for the workshop is based on six Python scripts that you can find [here](https://github.com/bcimontreal/bci_workshop).
 You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
 
-Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone git://github.com/hubertjb/bci_workshop.git``` in the command line.
+Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone git://github.com/bcimontreal/bci_workshop.git``` in the command line.
 
 
 ## Exercise 1: A simple neurofeedback interface
@@ -103,7 +103,7 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 
 ### E1.2 Running the Python visualization script
 
-1. Open the script ```exercise_01_one_channel.py``` in Spyder (or your favorite IDE/text editor).
+1. Open the script ```exercise_01.py``` in Spyder (or your favorite IDE/text editor).
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish (line 32 to 48).
 3. Run the script. In Spyder, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
@@ -228,7 +228,7 @@ Once your BCI framework is functional, you can start thinking about sending your
 Many different libraries can be used for that, beginning with standard TCP/IP communication implementations (e.g. Python's [socket](https://docs.python.org/2/library/socket.html) module).
 We suggest [pyZMQ](https://zeromq.github.io/pyzmq/), which allows simple communication between a Python application and any programming language supporting the [ZMQ](http://zeromq.org/) protocol.
 
-For example, let's send our classifier decisions to a Processing script to create simple animations.
+For example, you could send the classifier's decisions to a Processing script to create simple animations based on your mental activity.
 
 ## Conclusion
 

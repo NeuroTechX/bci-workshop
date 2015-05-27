@@ -26,7 +26,7 @@ if __name__ == "__main__":
     
     #%% Set the experiment parameters
     
-    training_secs = 10
+    training_secs = 20
     win_test_secs = 1     # Length of the Test Window in seconds
     overlap_secs = 0.7    # Overlap between two consecutive Test Windows
     shift_secs = win_test_secs - overlap_secs   
