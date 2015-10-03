@@ -36,7 +36,7 @@ if __name__ == "__main__":
                           # (in seconds)
     overlap_secs = 0.5    # Overlap between two consecutive windows (in seconds)
     shift_secs = win_test_secs - overlap_secs
-    index_channel = 1     # Index of the channnel to be used (with the Muse, we 
+    index_channel = 0     # Index of the channnel to be used (with the Muse, we 
                           # can choose from 0 to 3)
 
     # This line changes params to work with only one electrode

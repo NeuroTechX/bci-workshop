@@ -327,10 +327,11 @@ class dataPlotter():
         #assert (data.shape[1] == self.nbCh), 'new data does not have the same number of channels'
         #assert (data.shape[0] == self.nbPoints), 'new data does not have the same number of points'
 
-        data = data - np.mean(data,axis=0)
-        std_data = np.std(data,axis=0)
-        std_data[np.where(std_data == 0)] = 1
-        data = data/std_data*self.chRange/5.0     
+        if self.nbCh > 1:
+            data = data - np.mean(data,axis=0)
+            std_data = np.std(data,axis=0)
+            std_data[np.where(std_data == 0)] = 1
+            data = data/std_data*self.chRange/5.0     
         
         for i, chName in enumerate(self.chNames):
             self.chLinesDict[chName].set_ydata(data[:,i]+self.offsets[i])
