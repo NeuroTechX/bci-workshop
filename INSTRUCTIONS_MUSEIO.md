@@ -8,7 +8,14 @@ TODO:
 - Add pictures, screenshots, snippets of code, jokes, it must be easy and fun to read!
 - Move to some blog format instead of one markdown document?
 
-Introduction...
+## Contents:
+
+- [Introduction](#introduction)
+- [Installation (Python, Muse SDK)](#installation-of-software-for-the-workshop)
+- [Exercise 1: A Simple Neurofeedback Interface](#exercise-1-a-simple-neurofeedback-interface)
+- [Exercise 2: A Basic BCI](#exercise-2-a-basic-bci)
+
+## Introduction
 
 - BCI are more accessible (available technology, machine learning, open source projects)
 - Many people want to know, where can I start? What should I do to start? If you have access to a computer and some kind of EEG device, you should be ready to start.
