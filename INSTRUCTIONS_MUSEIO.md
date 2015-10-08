@@ -40,9 +40,7 @@ Two packages are especially useful when dealing with scientific computing (as fo
 Other packages we will use in this workshop are:
 
 * [scikit-learn](http://scikit-learn.org/stable/): a machine learning library
-* An OSC library to receive the streamed EEG data in Python
-	* For UNIX (Linux, Mac OS): [pyliblo](http://das.nasophon.de/pyliblo/)
-	* For Windows: [pyOSC](https://trac.v2.nl/wiki/pyOSC?)??? MAYBE COULD BE USED FOR UNIX AS WELL! TO TRY!
+* [pyOSC](https://trac.v2.nl/wiki/pyOSC): A pure-Pythone OSC library to receive the streamed EEG data
 * [pyZMQ](https://zeromq.github.io/pyzmq/): the Python binding for ZMQ, a simple communication library
 
 To install Python 2.7 and most of the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). This Python distribution includes Python 2.7, and some packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python. The OSC library will require a separate installation.
@@ -52,11 +50,16 @@ To install Python 2.7 and most of the required packages, we suggest you download
 1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (if your Windows version is 32-bit, make sure to download the 32-bit installer).
 2. Execute the installer.
 
-This installs Python, Spyder and other packages we will need for the workshop (including scikit-learn and pyZMQ). The instructions for installing the OSC library depends on your OS. For UNIX systems, ... SHOULD WE USE pyOSC for BOTH???
-
-
 #### 1.2 Individual installation of Python and packages
+
 Alternatively, you can [download Python 2.7 independently](http://docs.python-guide.org/en/latest/starting/install/win/). Make sure to install ```pip``` (as explained [here]((http://docs.python-guide.org/en/latest/starting/install/win/))) and grab NumPy, matplotlib and scikit-learn by calling ```pip install <package_name>``` on the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
+
+#### 1.3 Installation of the OSC library
+
+Many Python libraries exist to allow communication with the OSC protocol, but each has its limitations. This workshop is based on pyOSC, a pure Python implementation, which works across platforms.
+
+1. Download the library from [here](https://trac.v2.nl/wiki/pyOSC), and extract it somewhere on your computer. (Note that the version of pyOSC available with ```pip``` only works with Python 3.0, and so cannot be used in this workshop.)
+2. Navigate to the extracted folder inside a terminal, and install the library by calling ```python setup.py install```.
 
 ### 2. Muse SDK
 
