@@ -2,13 +2,19 @@
 
 TODO:
 
-- Continue modifying the text to remove MuLES and add Muse-io (I stopped at section E1.1)
 - Choose an OSC library and write the Muse server accordingly
 - In code: change while loop to process data only where there's enough new points in the buffer
 - Add pictures, screenshots, snippets of code, jokes, it must be easy and fun to read!
 - Move to some blog format instead of one markdown document?
 
-Introduction...
+## Contents:
+
+- [Introduction](#introduction)
+- [Installation (Python, Muse SDK)](#installation-of-software-for-the-workshop)
+- [Exercise 1: A Simple Neurofeedback Interface](#exercise-1-a-simple-neurofeedback-interface)
+- [Exercise 2: A Basic BCI](#exercise-2-a-basic-bci)
+
+## Introduction
 
 - BCI are more accessible (available technology, machine learning, open source projects)
 - Many people want to know, where can I start? What should I do to start? If you have access to a computer and some kind of EEG device, you should be ready to start.
@@ -110,7 +116,7 @@ More details are available on the [official Muse Developer website](http://devel
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish (line 32 to 48).
 3. Run the script. If you use Spyder, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
-5. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
+5. To stop the execution of the script, press <Ctrl+C> in the Python console.
 
 ![ex1_figures](fig/ex1_figures.png?raw=true "Visualization in E1.2")
 
@@ -207,7 +213,7 @@ Let's try it now.
 4. When you hear a **first beep**; keep your eyes open and concentrate (while minimizing your movements).
 5. When you hear a **second beep**; close your eyes and relax (while minimizing your movements).
 6. When you hear a **third beep**, the classifier is trained and starts outputting decisions in the Python console: ```0``` when your eyes are open, and ```1``` when you close them. Additionally, a figure will display the decisions over a period of 30 seconds.
-7. To stop the execution of the script, press <Ctrl+C> in the Python console (don't forget MuLES is still running as well!).
+7. To stop the execution of the script, press <Ctrl+C> in the Python console.
 
 ![ex1_figures](fig/ex2_figure.png?raw=true "Visualization of decisions in E2.1")
 
@@ -237,7 +243,7 @@ For example, you could send the classifier's decisions to a Processing script to
 
 In this workshop, we saw 1) how to run a simple neurofeedback interface, and 2) use a basic brain-computer interface. To do so, we covered the basic principles behind the use of electroencephalography signals in modern BCI applications: properties of the raw EEG time series, extraction of band power features, physiological and motion artifacts, and machine learning-based classification of mental activities.
 
-We used the following tools in this workshop: the MuLES EEG server, the Python scripting language, and the Muse EEG headset. All the necessary scripts for this workshop are available [online](https://github.com/bcimontreal/bci_workshop) and their re-use is strongly encouraged. 
+We used the following tools in this workshop: the Python scripting language, and the Muse EEG headset. All the necessary scripts for this workshop are available [online](https://github.com/bcimontreal/bci_workshop) and their re-use is strongly encouraged. 
 
 Now is **your turn** to come up with inventive ways of using neurophysiological data! You can follow the pointers in the *References* section for inspiration.
 
