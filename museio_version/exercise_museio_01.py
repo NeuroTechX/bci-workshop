@@ -67,7 +67,7 @@ if __name__ == "__main__":
     
     #%% Start pulling data
     
-    BCIw.beep() # Beep sound
+    BCIw.play_sound('Beep.mp3') # Beep sound using mp3 file and pygame 
     
     # TODO: Change the process of pulling data from a buffer every 0.5 s to constantly
     #       collecting data and processing only when there's enough of it!
