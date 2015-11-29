@@ -214,23 +214,28 @@ def classifier_test(classifier, feature_vector, mu_ft, std_ft):
     #y_hat = None
     return y_hat
     
-def beep(soundfile):
+def play_sound(s):
+
     """
     Uses the Sound-playing interface pygame to play a sound file
         
     Arguments
     soundfile : whatever file you want to play. This will make it easier to implement verbal instructions to train different states instead of beeps. 
     """
-    
+
+    #s = 'Beep.mp3'
+
     FREQ = 44100   # same as audio CD
     BITSIZE = -16  # unsigned 16 bit
     CHANNELS = 2   # 1 == mono, 2 == stereo
     BUFFER = 1024  # audio buffer size in no. of samples
 
     pygame.mixer.init(FREQ, BITSIZE, CHANNELS, BUFFER)
-    pygame.mixer.music.load(soundfile)
-    pygame.mixer.music.play(soundfile)
+    pygame.mixer.music.load(s)
+    pygame.mixer.music.play()
     
+    return 
+
 def feature_names(ch_names):
     """
     Generate the name of the features
