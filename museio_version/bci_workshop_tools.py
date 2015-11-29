@@ -10,7 +10,7 @@ Created on Fri May 08 15:34:59 2015
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import svm
-import winsound
+import pygame #switching from winsound to pygame to make sound presentation crossplatform
 
 
 
@@ -214,15 +214,22 @@ def classifier_test(classifier, feature_vector, mu_ft, std_ft):
     #y_hat = None
     return y_hat
     
-def beep(f=500, d=500):
+def beep(soundfile):
     """
-    Uses the Sound-playing interface for Windows to play a beep
+    Uses the Sound-playing interface pygame to play a sound file
         
     Arguments
-    f: Frequency of the beep in Hz
-    d: Duration of the beep in ms
+    soundfile : whatever file you want to play. This will make it easier to implement verbal instructions to train different states instead of beeps. 
     """
-    winsound.Beep(f,d)
+    
+    FREQ = 44100   # same as audio CD
+    BITSIZE = -16  # unsigned 16 bit
+    CHANNELS = 2   # 1 == mono, 2 == stereo
+    BUFFER = 1024  # audio buffer size in no. of samples
+
+    pygame.mixer.init(FREQ, BITSIZE, CHANNELS, BUFFER)
+    pygame.mixer.music.load(soundfile)
+    pygame.mixer.music.play(soundfile)
     
 def feature_names(ch_names):
     """
