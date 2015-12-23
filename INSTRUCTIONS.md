@@ -41,9 +41,9 @@ Alternatively, you can [download Python 2.7 independently](http://docs.python-gu
 
 ### 2. Muse SDK
 
-This workshop is based on the [Muse](http://www.choosemuse.com/) EEG headband. The Muse provides 4 EEG dry sensors located on the forehead and behind the ears. It communicates via Bluetooth to a computer or a mobile device. An [SDK](https://sites.google.com/a/interaxon.ca/muse-developer-site/home) is available to allow basic control over the Muse's recording capabilities.
+This workshop is based on the [Muse](http://www.choosemuse.com/) EEG headband. The Muse provides 4 EEG dry sensors located on the forehead and behind the ears. It communicates via Bluetooth to a computer or a mobile device. An [SDK](http://developer.choosemuse.com/) is available to allow basic control over the Muse's recording capabilities.
 
-To install the SDK, download and execute the [Muse SDK Tools 3.4.1 installer for Windows](https://sites.google.com/a/interaxon.ca/muse-developer-site/download).
+To install the SDK, download and execute the [Muse SDK Tools 3.4.1 installer for Windows](http://developer.choosemuse.com/).
 
 ### 3. MuLES (MuSAE Lab EEG Server)
 
