@@ -92,7 +92,7 @@ if __name__ == "__main__":
             """ 2- COMPUTE FEATURES and CLASSIFY"""            
             # Compute features on "test_data"
             feat_vector = BCIw.compute_feature_vector(test_data, params['sampling frequency'])
-            y_hat = BCIw.classifier_test(classifier, feat_vector, mu_ft, std_ft)
+            y_hat = BCIw.classifier_test(classifier, feat_vector.reshape(1,-1), mu_ft, std_ft)
             
             decision_buffer = BCIw.updatebuffer(decision_buffer, np.reshape(y_hat,(-1,1)))
             
