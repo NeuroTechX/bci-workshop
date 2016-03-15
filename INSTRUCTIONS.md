@@ -244,6 +244,10 @@ Now is **your turn** to come up with inventive ways of using neurophysiological 
 - A blog with very cool and detailed posts about EEG/BCI hacking: [http://eeghacker.blogspot.ca/](http://eeghacker.blogspot.ca/)
 - The [neuralDrift](http://neuraldrift.net/), a neurogame based in MATLAB that exploits the same concept as was seen in this workshop: [https://github.com/hubertjb/neuraldrift](https://github.com/hubertjb/neuraldrift)
 - Series of introductory lectures on Brain-Computer Interfacing: [http://sccn.ucsd.edu/wiki/Introduction_To_Modern_Brain-Computer_Interface_Design](http://sccn.ucsd.edu/wiki/Introduction_To_Modern_Brain-Computer_Interface_Design)
+- A visualizer in [Unity](https://github.com/syswsi/BCI_Experiments)
+- [Using spotify and the Muse](https://github.com/eisendrachen00/musemusic)
+- Other Neurotech [ressource](https://github.com/NeuroTechX/awesome-bci)
+
 
 
 ## Authors
