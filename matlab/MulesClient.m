@@ -94,6 +94,7 @@ classdef MulesClient < handle
 %         This method flushes the data from the MuLES software. This is equivalent to calling
 %         sendcommand('F').
         fwrite(self.client, 'F');
+        disp('Flush Command');
         end
         
         function sendtrigger(self, trigger)
@@ -196,6 +197,9 @@ classdef MulesClient < handle
         end
         
         function data_buffer = getdata(self, seconds, flush)
+            % Returns a data_buffer with n_samples (fs * seconds)
+            % Given that EEG DATA can come in multi-sample packages, the
+            % size of ouput buffer can be larger than the required
             if nargin < 3
                 flush = true;
             end
@@ -205,12 +209,11 @@ classdef MulesClient < handle
           %Size of data requested
             n_samples = round(seconds * self.params{3});
             n_columns = numel(self.params{4});
-            data_buffer = -1 * ones(n_samples, n_columns); 
+            data_buffer = []; 
         
-            while (data_buffer(1, n_columns) < 0) %#While the first row has not been rewriten
+            while size(data_buffer,1) < n_samples %#Buffers is smaller that required
                 new_data = self.getalldata();
                 data_buffer = [data_buffer; new_data];
-                data_buffer(1:size(new_data,1),:) = [];
             end  
         end
     end
