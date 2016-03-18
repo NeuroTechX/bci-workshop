@@ -16,10 +16,10 @@ if __name__ == "__main__":
     
     # MuLES connection parameters    
     mules_ip = '127.0.0.1'
-    muse_port = 30000
+    mules_port = 30000
     
     # Creates a mules_client
-    mules_client = mules.MulesClient(mules_ip, muse_port) 
+    mules_client = mules.MulesClient(mules_ip, mules_port) 
     # Device parameters    
     params = mules_client.getparams()
 
@@ -28,7 +28,6 @@ if __name__ == "__main__":
     win_test_secs = 1     # Length of the Test Window in seconds
     overlap_secs = 0.5    # Overlap between two consecutive Test Windows
     shift_secs =win_test_secs - overlap_secs
-    index_channel = 1     # Index of the channnel to be used 
     
     # Get name of features
     names_of_features = BCIw.feature_names(params['names of channels'])
