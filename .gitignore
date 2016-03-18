@@ -1,0 +1,14 @@
+# Mac
+.DS_Store
+
+# Matlab
+*.asv
+
+# Python
+*.pyc
+
+# Markdown
+*.md~
+
+# Others
+.Rhistory

@@ -239,8 +239,8 @@ class MulesClient():
     def getdata(self, seconds, flush=True ):
         """
             Flush all the Data present in MuLES buffer and, 
-            Request and Retrieves a certain amount of Data indicated as seconds
-            Data returned has the the shape [seconds * sampling_frequency, channels] 
+            Request and Retrieve a certain amount of Data indicated as seconds
+            Data returned has the shape [seconds * sampling_frequency, channels] 
             
             Argument:
             seconds: used to calculate the amount of samples requested n_samples
