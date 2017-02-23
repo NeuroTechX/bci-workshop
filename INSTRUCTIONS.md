@@ -8,7 +8,7 @@ This workshop is intended for people with no or limited experience with Brain-Co
 
 The workshop is based on the following tools:
 
-1. **Python 2.7 (and packages)**: a popular, powerful, free and simple to read scripting language
+1. **Python 2 or Python 3, (and packages)**: a popular, powerful, free and simple to read scripting language
 2. **Muse SDK**: the software development kit provided to play around with the Muse EEG headband
 3. **MuLES**: an EEG server that allows device-agnostic applications
 
@@ -16,7 +16,7 @@ Many alternative tools could have been chosen for this workshop, such as **BCI t
 
 We chose the Python/Muse/MuLES combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Because of this choice, we are stuck with Windows; however, the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
 
-### 1. Python 2.7 and packages
+### 1. Python 2 or Python 3, and packages
 
 Python is a high-level scripting language that has been widely adopted in a plethora of applications. It is free, simple to read, and has an extensive standard library. Many packages can also be downloaded online to complement its features.
 
@@ -27,9 +27,9 @@ Other packages we will use in this workshop are:
 * [scikit-learn](http://scikit-learn.org/stable/): a machine learning library
 * [pyZMQ](https://zeromq.github.io/pyzmq/): the Python binding for ZMQ, a simple communication library
 
-To install Python 2.7 and the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). This Python distribution includes Python 2.7, all the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
+To install Python 2 or Python 3, and the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 2.7 (in case of Anaconda2) or Python 3.5 (in case of Anaconda 3), all the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
 
-#### 1.1 Installation with Anaconda
+#### 1.1 Installation with Anaconda (recommended)
 
 1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (if your Windows version is 32-bit, make sure to download the 32-bit installer).
 2. Execute the installer.
