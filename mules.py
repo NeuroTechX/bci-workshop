@@ -4,12 +4,33 @@ April 2015
 
 This file contains the MuLES class which hadles a TCP/IP connection to the 
 MuLES software, send commands, get data, send triggers among other functions.
+
+Methods:
+    __init__(ip, port)
+    connect()
+    disconnect()
+    kill()
+    sendcommand(command)
+    flushdata()
+    sendtrigger(trigger)
+    getparam()
+    getfs()
+    getdevicename()
+    getmessage()
+    getheadder()
+    parseheader(package)
+    getnames()
+    getalldata()
+    parsedata(package)
+    getdata(seconds, flush)
+
 '''
 
 import socket
 import numpy as np
 import array
 import struct
+import sys
     
 class MulesClient():
     """
@@ -36,6 +57,7 @@ class MulesClient():
         """
         self.ip = ip
         self.port = port
+        self.python2 = sys.version_info < (3,0)
         
         # TCP/IP connection
         self.connect()
@@ -49,6 +71,7 @@ class MulesClient():
                        'data format': data_format,
                        'number of channels': nCh,
                        'names of channels': channel_names}
+        
     
     def connect(self):
         """
@@ -56,14 +79,14 @@ class MulesClient():
         to attempt to reconnect to the MuLES (Server). An exception is raised if the
         reconnection attempt is unsuccessful.
         """
-        print 'Attempting connection'
+        print('Attempting connection')
         try:
             self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client.connect((self.ip, self.port))
-            print 'Connection successful'
+            print('Connection successful')
         except:
             self.client = None
-            print 'Connection attempt unsuccessful'
+            print('Connection attempt unsuccessful')
             raise
            
     def disconnect(self):
@@ -74,7 +97,7 @@ class MulesClient():
         """
         self.client.close()
         self.client = None
-        print 'Connection closed successfully'
+        print('Connection closed successfully')
         
     def kill(self):
         """
@@ -90,7 +113,11 @@ class MulesClient():
         Arguments:
             command: the command to be sent.
         """
-        self.client.send(command)
+        if self.python2:         
+            self.client.send(command)
+        else:
+            self.client.send(bytearray(command,'ISO-8859-1'))
+                
     
     def flushdata(self):
         """
@@ -99,7 +126,7 @@ class MulesClient():
         This method flushes the data from the MuLES software. This is equivalent to calling
         sendcommand('F').
         """
-        self.client.send('F')
+        self.sendcommand('F') 
 
     def sendtrigger(self, trigger):
         """
@@ -108,9 +135,8 @@ class MulesClient():
         Arguments:
             trigger: the trigger to be sent, it has to be in the range [1 64].
         """
-        print 'Trigger: ' + str(trigger) + ' was sent'
-        self.client.send(chr(trigger))        
-        
+        print('Trigger: ' + str(trigger) + ' was sent')
+        self.sendcommand(chr(trigger)) 
         
     def getparams(self):
         """
@@ -126,7 +152,19 @@ class MulesClient():
             A dictionary containing information about the device.
         """
         return self.params
+        
+    def getfs(self):
+        """
+            Retrieves sampling frequency 'fs' [Hz] 
+        """
+        return self.params['sampling frequency']
 
+    def getdevicename(self):
+        """
+            Retrieves the name of the device
+        """
+        return self.params['device name']
+        
     def getmessage(self):
         """
             This gets a Message sent by MuLES an returns a byte array with the 
@@ -138,15 +176,20 @@ class MulesClient():
         #[0] is used to get an int32 rather than turple
         # Next while lopp secures the integrity of the package
         package = '';
+        
         while len(package) < n_bytes:
+            if self.python2:
                 package += self.client.recv(1)
+            else:
+                package += self.client.recv(1).decode("ISO-8859-1")               
+        
         return package
         
     def getheader(self):
         """
             Request and Retrieves Header Information from MuLES 
         """
-        print('Header request')
+        #print('Header request')
         self.sendcommand('H')    
         return self.parseheader(self.getmessage())
         
@@ -183,7 +226,7 @@ class MulesClient():
         """
             Request and Retrieves the names of channels from MuLES 
         """
-        print('Names Request')
+        #print('Names Request')
         self.sendcommand('N')    
         return self.getmessage().split(',')
    
@@ -216,7 +259,7 @@ class MulesClient():
         n_samples = (n_bytes/size_element) / n_columns
         ####mesData = np.uint8(mesData) # Convert from binary to integers (not necessary pyton)
         
-        bytes_per_element = np.flipud(np.reshape(list(bytearray(package)), [size_element,-1],order='F'))
+        bytes_per_element = np.flipud(np.reshape(list(bytearray(package, 'ISO-8859-1'), ), [size_element,-1],order='F'))
         # Changes "package" to a list with size (n_bytes,1) 
         # Reshapes the list into a matrix bytes_per_element which has the size: (4,n_bytes/4)
         # Flips Up-Down the matrix of size (4,n_bytes/4) to correct the swap in bytes    
@@ -225,11 +268,14 @@ class MulesClient():
         # Unrolls the matrix bytes_per_element, in "package_correct_order" 
         # that has a size (n_bytes,1) 
              
-        data_format_tags = self.params['data format']*n_samples
+        data_format_tags = self.params['data format']*int(n_samples)
         # Tags used to map the elements into their corresponding representation
         package_correct_order_char = "".join(map(chr,package_correct_order))
             
-        elements = struct.unpack(data_format_tags,package_correct_order_char)
+        if self.python2:
+            elements = struct.unpack(data_format_tags,package_correct_order_char)
+        else:
+            elements = struct.unpack(data_format_tags, bytearray(package_correct_order_char,'ISO-8859-1'))
         # Elements are cast in their corresponding representation
         data = np.reshape(np.array(elements),[n_samples,n_columns],order='C')
         # Elements are reshap into data [n_samples, n_columns]        
