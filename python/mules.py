@@ -258,8 +258,10 @@ class MulesClient():
         n_bytes = len(package)
         n_samples = (n_bytes/size_element) / n_columns
         ####mesData = np.uint8(mesData) # Convert from binary to integers (not necessary pyton)
-        
-        bytes_per_element = np.flipud(np.reshape(list(bytearray(package, 'ISO-8859-1'), ), [size_element,-1],order='F'))
+        if self.python2:
+            bytes_per_element = np.flipud(np.reshape(list(bytearray(package)), [size_element,-1],order='F'))
+        else:
+            bytes_per_element = np.flipud(np.reshape(list(bytearray(package, 'ISO-8859-1'), ), [size_element,-1],order='F'))
         # Changes "package" to a list with size (n_bytes,1) 
         # Reshapes the list into a matrix bytes_per_element which has the size: (4,n_bytes/4)
         # Flips Up-Down the matrix of size (4,n_bytes/4) to correct the swap in bytes    

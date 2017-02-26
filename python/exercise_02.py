@@ -97,7 +97,7 @@ if __name__ == "__main__":
             decision_buffer = BCIw.updatebuffer(decision_buffer, np.reshape(y_hat,(-1,1)))
             
             """ 3- VISUALIZE THE DECISIONS"""           
-            print str(y_hat)
+            print(str(y_hat))
             plotter_decision.updatePlot(decision_buffer) # Plot the decision buffer
             
             plt.pause(0.001)
