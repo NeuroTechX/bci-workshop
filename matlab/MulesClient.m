@@ -173,7 +173,7 @@ classdef MulesClient < handle
 %          Request and Retrieves ALL Data present in MuLES buffer 
 %          (Data collected since the last Flush or last DataRequest)
 %          in the shape  [samples, channels] 
-            disp('Data Request');
+           % disp('Data Request');
             self.sendcommand('R');    
             data = self.parsedata(self.getmessage());  
         end

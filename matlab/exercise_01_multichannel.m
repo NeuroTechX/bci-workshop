@@ -1,5 +1,5 @@
 % BCI workshop 2015
-% Exercise 1: A neurofeedback interface (single-channel)
+% Exercise 1: A neurofeedback interface (multi-channel)
 % 
 % Description:
 % In this exercise, we'll try and play around with a simple interface that
@@ -31,8 +31,7 @@ shift_secs = win_test_secs - overlap_secs;
 index_channel = 1;     % Index of the channnel to be used (with the Muse, we 
                        % can choose from 0 to 3)
 
-% This line changes params to work with only one electrode
-params{6} = {'CH1','STATUS'}';
+
 name_of_channels   = params{6};
 sampling_frequency = params{3};
 
@@ -64,7 +63,6 @@ disp(' Press ESC in the raw EEG signal figure window to break the While Loop');
 while true
     % 1- ACQUIRE DATA 
     eeg_data = mules_client.getdata(shift_secs, false); % Obtain EEG data from MuLES  
-    eeg_data = eeg_data(:,[index_channel, end]); % Keep only one electrode (and the STATUS channel) for further analysis      
     eeg_buffer = updatebuffer(eeg_buffer, eeg_data); % Update EEG buffer
 
     % 2- COMPUTE FEATURES 
