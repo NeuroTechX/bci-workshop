@@ -50,8 +50,10 @@ n_win_test = floor((eeg_buffer_secs - win_test_secs) / shift_secs) + 1;
 feat_buffer = zeros(n_win_test , numel(names_of_features));
 
 % Initialize the plots
-h_eeg  = figure();
-h_feat = figure();
+h_eeg_fig = figure();
+h_eeg_ax = axes();
+figure();
+h_feat_ax = axes();
 
 
 %% Start pulling data
@@ -73,19 +75,16 @@ while true
     feat_buffer = updatebuffer(feat_buffer, feat_vector); % Update the feature buffer
 
     % 3- VISUALIZE THE RAW EEG AND THE FEATURES        
-    figure(h_eeg);
-    plot_channels(eeg_buffer, sampling_frequency, [], name_of_channels);
-    figure(h_feat);
-    plot_channels(feat_buffer, 1/shift_secs, [], names_of_features);
+    plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
+    plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
     
     pause(0.00001);
-    
-    
-    commandKey = get(h_eeg,'CurrentCharacter');        
+       
+    commandKey = get(h_eeg_fig, 'CurrentCharacter');        
     if commandKey == char(27) %If the CurrentCharacter is ESC, end program
         break
     else
-        set(h_eeg,'currentch',char(0));
+        set(h_eeg_fig, 'currentch', char(0));
     end    
 end
 

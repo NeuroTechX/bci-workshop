@@ -65,7 +65,8 @@ eeg_buffer = zeros(sampling_frequency * eeg_buffer_secs , numel(name_of_channels
 decision_buffer = zeros(30,1);
 
 % Initialize the plots
-h_yhat  = figure();
+h_yhat_fig  = figure();
+h_yhat_ax   = axes();
 
 mules_client.flushdata()  % Flushes old data from MuLES
 
@@ -90,16 +91,15 @@ while true
     
     % 3- VISUALIZE THE DECISIONS
     disp(y_hat);
-    figure(h_yhat);
-    plot_channels(decision_buffer, shift_secs, [], 'y-hat');
+    plot_channels(h_yhat_ax, decision_buffer, shift_secs, 'y-hat');
     
     pause(0.00001);
     
-    commandKey = get(h_yhat,'CurrentCharacter');        
+    commandKey = get(h_yhat_fig,'CurrentCharacter');        
     if commandKey == char(27) %If the CurrentCharacter is ESC, end program
         break
     else
-        set(h_yhat,'currentch',char(0));
+        set(h_yhat_fig,'currentch',char(0));
     end    
 end
 

@@ -26,6 +26,10 @@ sigma = zeros(1, size(X, 2));
 mu = nanmean(X);
 sigma = nanstd(X);
 
+% In case std is 0, make std = 1; 
+sigma(sigma == 0) = 1;
+
+
 X_norm = bsxfun(@minus,X,mu);
 if strcmp(kind,'mean')
     return
