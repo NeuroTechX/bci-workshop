@@ -17,8 +17,12 @@ __*__ In this workshop, the Python scripts are compatible with Python 2 and Pyth
 
 Additional software is required the workshop, specifically, the following tools:
 
-* **Muse SDK**: the software development kit provided to play around with the Muse EEG headband.
-* **MuLES**: an EEG server that allows device-agnostic applications.
+* **Muse SDK**: the software development kit provided to play around with the **Muse*** EEG headband.
+* **MuLES**: an EEG server that allows device-agnostic applications. __**__
+
+__*__ The Muse model utilized for this workshop is the 2014. Unfortunately the newer version (**Muse 2016**) is not supported for the moment in **MuLES**. If your device has 2 micro-USB ports, it's the 2014 model.
+
+__**__ The scripts for the workshop will perfectly work for other EEG headsets supported by **MuLES** for example: [EMOTIV EPOC+](https://www.emotiv.com/product/emotiv-epoc-14-channel-mobile-eeg/), [Neurosky MindWave](http://support.neurosky.com/kb/science/what-are-the-differences-between-the-mindset-mindwave-mindwave-mobile-and-mindband), [Neuroelectrics ENOBIO](http://www.neuroelectrics.com/products/enobio/) and [OpenBCI V3](http://docs.openbci.com/Hardware/02-Cyton). See [MuLES documentation](https://github.com/MuSAELab/MuLES/blob/master/MuLES_documentation.pdf) for further information.
 
 ## A Installation of software for the workshop
 
@@ -31,7 +35,7 @@ These are the steps to setup your computer
 **A.1.** Installing Python and required packages  
 **A.2.** Installing Muse SDK  
 **A.3.** Installing MuLES (MuSAE Lab EEG Server)  
-**A.4.** Pairing the Muse EEG headset and configuring MuLES
+**A.4.** Pairing the Muse EEG headset and configuring MuLES  
 **A.5.** Download the code for the workshop
 
 ### A.1 Installing Python required packages
@@ -58,12 +62,12 @@ This installs Python, Spyder and all the packages we will need for the workshop 
 #### (2) Individual installation of Python and packages
 Alternatively, you can [download Python 2.7 independently](http://docs.python-guide.org/en/latest/starting/install/win/). Make sure to install ```pip``` (as explained [here]((http://docs.python-guide.org/en/latest/starting/install/win/))) and grab **NumPy**, **matplotlib** and **scikit-learn** by calling ```pip install <package_name>``` on the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
 
-### 1.2. Muse SDK
+### A.2. Muse SDK
 This workshop is based on the [Muse](http://www.choosemuse.com/) EEG headband. The Muse provides 4 EEG dry sensors, 2 located on the forehead and 2 behind the ears. It communicates via Bluetooth to a computer or a mobile device. An [SDK](http://developer.choosemuse.com/) is available to allow basic control over the Muse's acquisition and record capabilities.
 
 To install the SDK, download and execute the [Muse SDK Tools 3.4.1 installer for Windows](http://developer.choosemuse.com/).
 
-### 1.3. MuLES (MuSAE Lab EEG Server)
+### A.3. MuLES (MuSAE Lab EEG Server)
 
 [MuLES](https://github.com/MuSAELab/MuLES) is an EEG streaming server, i.e. a piece of software that handles the communication with an EEG device and streams the recorded signals on a network. This is very useful in our case since:
 
@@ -75,7 +79,7 @@ MuLES is developed in LabVIEW, and is currently only available for Windows. Futu
 
 To install MuLES, download the [MuLES installer v1.3](https://github.com/MuSAELab/MuLES/releases) and follow the instructions given on the web page.
 
-### 1.4. Pairing the Muse EEG headset and configuring MuLES
+### A.4. Pairing the Muse EEG headset and configuring MuLES
 The **Muse** communicates to external devices using the Bluetooth protocol, and thus needs to be paired with your computer. To pair the **Muse** with your computer, follow these steps:
 
 1. Switch on the **Muse** into Pairing Mode by holding the button down for ~5 seconds. The light should start flashing.
@@ -94,7 +98,7 @@ Now that your computer is set up to recognize the Muse, we will configure MuLES 
 6. Save and close the file.
 
 
-### 1.5. Download the code for the workshop
+### A.5. Download the code for the workshop
 
 The code for the workshop consists of Python (and MATLAB) scripts that you can find [here](https://github.com/bcimontreal/bci_workshop).
 You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
