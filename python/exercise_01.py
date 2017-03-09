@@ -9,7 +9,6 @@ In this exercise, we'll try and play around with a simple interface that
 receives EEG from one electrode, computes standard frequency band powers 
 and displays both the raw signals and the features.
 
-
 """
 
 
@@ -29,7 +28,6 @@ if __name__ == "__main__":
     params = mules_client.getparams() # Get the device parameters   
     
     #%% Set the experiment parameters
-    
     eeg_buffer_secs = 15  # Size of the EEG data buffer used for plotting the 
                           # signal (in seconds) 
     win_test_secs = 1     # Length of the window used for computing the features 
@@ -49,8 +47,7 @@ if __name__ == "__main__":
     #%% Initialize the buffers for storing raw EEG and features
 
     # Initialize raw EEG data buffer (for plotting)
-    eeg_buffer = np.zeros((params['sampling frequency']*eeg_buffer_secs, 
-                           len(params['names of channels']))) 
+    eeg_buffer = np.zeros((params['sampling frequency']*eeg_buffer_secs, len(params['names of channels']))) 
     
     # Compute the number of windows in "eeg_buffer_secs" (used for plotting)
     n_win_test = int(np.floor((eeg_buffer_secs - win_test_secs) / float(shift_secs) + 1))
@@ -65,15 +62,14 @@ if __name__ == "__main__":
     
     plotter_feat = BCIw.dataPlotter(n_win_test,
                                     names_of_features,
-                                    1/float(shift_secs))
+                                    1 / float(shift_secs))
                                     
     
     #%% Start pulling data
     
     mules_client.flushdata()  # Flush old data from MuLES       
     BCIw.beep() # Beep sound  
-    
-    
+      
     # The try/except structure allows to quit the while loop by aborting the 
     # script with <Ctrl-C>
     print(' Press Ctrl-C in the console to break the While Loop')

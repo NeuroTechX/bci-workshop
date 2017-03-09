@@ -9,7 +9,6 @@ In this exercise, we'll try and play around with a simple interface that
 receives EEG from mulitple electrodes, computes standard frequency band powers 
 and displays both the raw signals and the features.
 
-
 """
 
 

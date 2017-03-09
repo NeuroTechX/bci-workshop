@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-MuLES Simple Client example
-This script shows how to connect to MuLES and request EEG data 
-Basic BCI
+
+BCI workshop 2015
+Exercise 2: A Basic BCI
+
+Description:
+In this second exercise, we will learn how to use an automatic algorithm to 
+recognize somebody's mental states from their EEG. We will use a classifier: 
+a classifier is an algorithm that, provided some data, learns to recognize 
+patterns, and can then classify similar unseen information.
+
 """
 
 
@@ -22,7 +29,6 @@ if __name__ == "__main__":
     mules_client = mules.MulesClient(mules_ip, mules_port) 
     # Device parameters    
     params = mules_client.getparams()
-    fs = params['sampling frequency']
     
     #%% Set the experiment parameters
     
@@ -84,20 +90,20 @@ if __name__ == "__main__":
         while True: 
             
             """ 1- ACQUIRE DATA """
-            eeg_data = mules_client.getdata(shift_secs, False)
-            eeg_buffer = BCIw.updatebuffer(eeg_buffer, eeg_data)
+            eeg_data = mules_client.getdata(shift_secs, False) # Obtain EEG data from MuLES  
+            eeg_buffer = BCIw.updatebuffer(eeg_buffer, eeg_data) # Update EEG buffer
             # Get newest "testing samples" from the buffer        
             test_data = BCIw.getlastdata(eeg_buffer, win_test_secs * params['sampling frequency'])
 
             """ 2- COMPUTE FEATURES and CLASSIFY"""            
             # Compute features on "test_data"
             feat_vector = BCIw.compute_feature_vector(test_data, params['sampling frequency'])
-            y_hat = BCIw.classifier_test(classifier, feat_vector, mu_ft, std_ft)
+            y_hat = BCIw.classifier_test(classifier, feat_vector.reshape(1,-1), mu_ft, std_ft)
             
             decision_buffer = BCIw.updatebuffer(decision_buffer, np.reshape(y_hat,(-1,1)))
             
             """ 3- VISUALIZE THE DECISIONS"""           
-            print str(y_hat)
+            print(str(y_hat))
             plotter_decision.updatePlot(decision_buffer) # Plot the decision buffer
             
             plt.pause(0.001)

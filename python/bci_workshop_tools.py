@@ -183,9 +183,10 @@ def classifier_train(feature_matrix_0, feature_matrix_1, algorithm = 'SVM'):
     y = np.concatenate((class0, class1),axis=0)
     features_all = np.concatenate((feature_matrix_0, feature_matrix_1),axis=0)
     
-    # Normalize inputs
-    mu_ft = np.mean(features_all)
-    std_ft = np.std(features_all)
+    # Normalize features, columnwise
+    mu_ft = np.mean(features_all, axis=0)
+    std_ft = np.std(features_all, axis=0)
+    
     X = (features_all - mu_ft) / std_ft
     
     # Train SVM, using default parameters     
