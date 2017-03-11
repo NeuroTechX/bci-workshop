@@ -71,7 +71,6 @@ classdef MulesClient < handle
 %         This method shuts down the connection to the MuLES
 %         The connection parameters are preserved, so the connection can later be reestablished
 %         by using the connect() method.
-
             fclose(self.client);
             disp('Connection closed successfully');
 
@@ -79,30 +78,30 @@ classdef MulesClient < handle
         function kill(self)
 %         This method send the command Kill to the MuLES software, which causes
 %         to end its execution
-        self.sendcommand('K')
+            self.sendcommand('K')
         end
 
         function sendcommand(self, command)
 %         Sends an arbitrary command to the MuLES software.
 %         Arguments:
 %            command: the command to be sent.
-        fwrite(self.client, command);
+            fwrite(self.client, command);
         end
 
         function flushdata(self)
 %         Convenience method.
 %         This method flushes the data from the MuLES software. This is equivalent to calling
 %         sendcommand('F').
-        fwrite(self.client, 'F');
-        disp('Flush Command');
+            self.sendcommand('F');
+            disp('Flush Command');
         end
 
         function sendtrigger(self, trigger)
 %         Send a trigger to the MuLES software.
 %         Arguments:
 %             trigger: the trigger to be sent, it has to be in the range [1 64].
-         disp(['Trigger: ', num2str(trigger) , ' was sent']);
-         fwrite(self.client,trigger,'uint8');
+            disp(['Trigger: ', num2str(trigger) , ' was sent']);
+            fwrite(self.client,trigger,'uint8');
         end
 
         function params = getparams(self)
@@ -114,7 +113,7 @@ classdef MulesClient < handle
 %             'data format'
 %             'number of channels'
 
-         params = self.params;
+            params = self.params;
         end
 
         function package = getmessage(self)
@@ -127,9 +126,9 @@ classdef MulesClient < handle
 
         function [dev_name, dev_hardware, fs, data_format, nCh] = getheader(self)
 %          Request and Retrieves Header Information from MuLES
-             disp('Header request');
-             self.sendcommand('H');
-             [dev_name, dev_hardware, fs, data_format, nCh] = self.parseheader(char(self.getmessage())');
+            disp('Header request');
+            self.sendcommand('H');
+            [dev_name, dev_hardware, fs, data_format, nCh] = self.parseheader(char(self.getmessage())');
         end
 
         function [dev_name, dev_hardware, fs, data_format, nCh] = parseheader(self, package)
