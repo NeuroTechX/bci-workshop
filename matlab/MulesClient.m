@@ -11,8 +11,10 @@ classdef MulesClient < handle
         port          %the port to use for a particular MuLES client. Every instance of MuLES should
 %                     use a different port. To determine which port to use, please refer to the
 %                     configuration file you are using for each instance of MuLES.
-        client
         params
+        clientSocket
+        clientDIS
+        clientDOS       
     end
 
     methods
@@ -25,6 +27,7 @@ classdef MulesClient < handle
 %             Data format
 %             Number of channels
 %             Extra parameters
+          
             self.ip = ip;
             self.port = port;
 
@@ -49,29 +52,26 @@ classdef MulesClient < handle
 %         to attempt to reconnect to the MuLES (Server). An exception is raised if the
 %         reconnection attempt is unsuccessful.
             disp('Attempting connection');
-
-%         Open a connection.
-            self.client = tcpip(self.ip, self.port, 'NetworkRole', 'client');
-            self.client.InputBufferSize = 500000;
-            self.client.Timeout = 5; %in seconds
-            waiting_server = true;
-
-            while waiting_server
-                waiting_server = false;
-                try
-                    fopen(self.client);
-                catch
-                    waiting_server = true;
-                end
-                disp(['Connection with MuLES (', self.ip, ') was successful'] );
-            end
+            
+%         MATLAB: Use of Java Socket class instead of Instrument Control Toolbox   
+            import java.net.Socket
+            import java.io.*              
+            self.clientSocket = Socket(self.ip, self.port);
+            self.clientSocket.setSoTimeout(5 * 1000);
+            clientInputStream = self.clientSocket.getInputStream();
+            clientOutputStream = self.clientSocket.getOutputStream();
+            self.clientDIS = DataInputStream(clientInputStream);
+            self.clientDOS = DataOutputStream(clientOutputStream);
+              
+            
+            disp(['Connection with MuLES (', self.ip, ') was successful'] );
         end
 
         function disconnect(self)
 %         This method shuts down the connection to the MuLES
 %         The connection parameters are preserved, so the connection can later be reestablished
 %         by using the connect() method.
-            fclose(self.client);
+            self.clientSocket.close();
             disp('Connection closed successfully');
 
         end
@@ -85,7 +85,7 @@ classdef MulesClient < handle
 %         Sends an arbitrary command to the MuLES software.
 %         Arguments:
 %            command: the command to be sent.
-            fwrite(self.client, command);
+            self.dos_write_bytes(self.clientDOS, command);
         end
 
         function flushdata(self)
@@ -119,19 +119,21 @@ classdef MulesClient < handle
         function package = getmessage(self)
 %         This gets a Message sent by MuLES an returns a byte array with the
 %         Message content
-            nBytes_4B = fread(self.client, 4);  %How large is the package (# bytes)
+            nBytes_4B = self.dis_read_bytes(self.clientDIS, 4);  %How large is the package (# bytes)
             nBytes = double(swapbytes(typecast(uint8(nBytes_4B),'int32')));
-            package = fread(self.client,nBytes);
+            package = self.dis_read_bytes(self.clientDIS,nBytes);           
+            
+            
         end
 
         function [dev_name, dev_hardware, fs, data_format, nCh] = getheader(self)
-%          Request and Retrieves Header Information from MuLES
+%         Request and Retrieves Header Information from MuLES
             disp('Header request');
             self.sendcommand('H');
             [dev_name, dev_hardware, fs, data_format, nCh] = self.parseheader(char(self.getmessage())');
         end
 
-        function [dev_name, dev_hardware, fs, data_format, nCh] = parseheader(self, package)
+        function [dev_name, dev_hardware, fs, data_format, nCh] = parseheader(~, package)
 %         This function parses the Header Package sent by MuLES to obtain the
 %         device's parameters. NAME, HARDWARE, FS, DATAFORMAT, #CH, EXTRA
 %
@@ -213,6 +215,26 @@ classdef MulesClient < handle
             while size(data_buffer,1) < n_samples %#Buffers is smaller that required
                 new_data = self.getalldata();
                 data_buffer = [data_buffer; new_data];
+            end
+        end
+        
+        function output = dis_read_bytes(~, DataInputStream_obj, n_bytes)
+%         DISREAD reads N bytes from the DataInputStream Java Oject
+%         View DataInputStream Java Methods in:
+%         http://docs.oracle.com/javase/7/docs/api/java/io/DataInputStream.html
+            output = uint8(zeros([n_bytes,1])); 
+            for i_byte = 1 : n_bytes
+                output(i_byte) = DataInputStream_obj.readUnsignedByte();
+            end
+        end
+        
+        function dos_write_bytes(~, DataOutpuStream_obj, bytes)
+%         DOSWRITE writes data in BYTES to the DataOutputStream Java Oject
+%         View DataInputStream Java Methods in:
+%         http://docs.oracle.com/javase/7/docs/api/java/io/DataOutputStream.html            
+            for i_byte = 1 : numel(bytes)
+                a = uint8(bytes(i_byte));
+                DataOutpuStream_obj.writeByte(a);
             end
         end
     end
