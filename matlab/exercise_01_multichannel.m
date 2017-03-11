@@ -11,6 +11,8 @@ clear;
 close all;
 
 addpath('bci_workshop_tools\');
+global stop_loop
+stop_loop = false;
 
 % MuLES connection parameters    
 mules_ip = '127.0.0.1';
@@ -50,7 +52,7 @@ n_win_test = floor((eeg_buffer_secs - win_test_secs) / shift_secs) + 1;
 feat_buffer = zeros(n_win_test , numel(names_of_features));
 
 % Initialize the plots
-h_eeg_fig = figure();
+h_eeg_fig = figure('CloseRequestFcn',@fig_closereq);
 h_eeg_ax = axes();
 figure();
 h_feat_ax = axes();
@@ -60,9 +62,9 @@ h_feat_ax = axes();
 mules_client.flushdata();  % Flush old data from MuLES       
 tone(500,500); % Beep sound
              
-disp(' Press ESC in the raw EEG signal figure window to break the While Loop');
+disp(' Close the raw EEG signal figure window to break the While Loop');
 
-while true
+while ~stop_loop
     % 1- ACQUIRE DATA 
     eeg_data = mules_client.getdata(shift_secs, false); % Obtain EEG data from MuLES  
     eeg_buffer = updatebuffer(eeg_buffer, eeg_data); % Update EEG buffer
@@ -79,13 +81,7 @@ while true
     plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
     
     pause(0.00001);
-       
-    commandKey = get(h_eeg_fig, 'CurrentCharacter');        
-    if commandKey == char(27) %If the CurrentCharacter is ESC, end program
-        break
-    else
-        set(h_eeg_fig, 'currentch', char(0));
-    end    
+   
 end
 
 % Close connection with MuLES

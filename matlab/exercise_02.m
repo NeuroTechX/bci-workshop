@@ -12,6 +12,8 @@ clear;
 close all;
 
 addpath('bci_workshop_tools\');
+global stop_loop
+stop_loop = false;
 
 % MuLES connection parameters    
 mules_ip = '127.0.0.1';
@@ -65,7 +67,7 @@ eeg_buffer = zeros(sampling_frequency * eeg_buffer_secs , numel(name_of_channels
 decision_buffer = zeros(30,1);
 
 % Initialize the plots
-h_yhat_fig  = figure();
+h_yhat_fig  = figure('CloseRequestFcn',@fig_closereq);
 h_yhat_ax   = axes();
 
 mules_client.flushdata()  % Flushes old data from MuLES
@@ -73,9 +75,9 @@ mules_client.flushdata()  % Flushes old data from MuLES
 %% Start pulling data
 tone(500,500); % Beep sound
              
-disp(' Press ESC in the decision figure window to break the While Loop');
+disp(' Close the decision figure window to break the While Loop');
 
-while true
+while ~stop_loop
     % 1- ACQUIRE DATA 
     eeg_data = mules_client.getdata(shift_secs, false); % Obtain EEG data from MuLES  
     eeg_buffer = updatebuffer(eeg_buffer, eeg_data); % Update EEG buffer
@@ -94,13 +96,7 @@ while true
     plot_channels(h_yhat_ax, decision_buffer, shift_secs, 'y-hat');
     
     pause(0.00001);
-    
-    commandKey = get(h_yhat_fig,'CurrentCharacter');        
-    if commandKey == char(27) %If the CurrentCharacter is ESC, end program
-        break
-    else
-        set(h_yhat_fig,'currentch',char(0));
-    end    
+     
 end
 
 % Close connection with MuLES

@@ -83,13 +83,7 @@ while ~stop_loop
     plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
     
     pause(0.00001);   
-    
-%    commandKey = get(h_eeg_fig, 'CurrentCharacter');        
-%    if commandKey == char(27) %If the CurrentCharacter is ESC, end program
-%        break
-%    else
-%        set(h_eeg_fig, 'currentch',char(0));
-%    end    
+     
 end
 
 % Close connection with MuLES
