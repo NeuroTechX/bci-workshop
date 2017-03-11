@@ -23,8 +23,8 @@ X_norm = X;
 mu = zeros(1, size(X, 2));
 sigma = zeros(1, size(X, 2));
 
-mu = nanmean(X);
-sigma = nanstd(X);
+mu = mean(X);
+sigma = std(X);
 
 % In case std is 0, make std = 1; 
 sigma(sigma == 0) = 1;
