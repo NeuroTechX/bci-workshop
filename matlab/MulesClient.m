@@ -101,7 +101,7 @@ classdef MulesClient < handle
 %         Arguments:
 %             trigger: the trigger to be sent, it has to be in the range [1 64].
             disp(['Trigger: ', num2str(trigger) , ' was sent']);
-            fwrite(self.client,trigger,'uint8');
+            self.sendcommand(trigger);
         end
 
         function params = getparams(self)
