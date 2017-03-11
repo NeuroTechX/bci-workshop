@@ -99,5 +99,10 @@ while ~stop_loop
      
 end
 
+% The decision figure is repltoted
+figure()
+h_yhat_ax = axes();
+plot_channels(h_yhat_ax, decision_buffer, shift_secs, 'y-hat');
+
 % Close connection with MuLES
 mules_client.disconnect(); % Close connection
