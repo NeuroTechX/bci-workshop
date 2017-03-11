@@ -11,6 +11,7 @@ classdef MulesClient < handle
         port          %the port to use for a particular MuLES client. Every instance of MuLES should
 %                     use a different port. To determine which port to use, please refer to the
 %                     configuration file you are using for each instance of MuLES.
+        isoctave
         params
         clientSocket
         clientDIS
@@ -30,7 +31,8 @@ classdef MulesClient < handle
           
             self.ip = ip;
             self.port = port;
-
+            self.isoctave = (exist ('OCTAVE_VERSION', 'builtin') > 0);
+                        
 %         TCP/IP connection
             self.connect();
 
@@ -52,17 +54,26 @@ classdef MulesClient < handle
 %         to attempt to reconnect to the MuLES (Server). An exception is raised if the
 %         reconnection attempt is unsuccessful.
             disp('Attempting connection');
-            
-%         MATLAB: Use of Java Socket class instead of Instrument Control Toolbox   
-            import java.net.Socket
-            import java.io.*              
-            self.clientSocket = Socket(self.ip, self.port);
-            self.clientSocket.setSoTimeout(5 * 1000);
-            clientInputStream = self.clientSocket.getInputStream();
-            clientOutputStream = self.clientSocket.getOutputStream();
-            self.clientDIS = DataInputStream(clientInputStream);
-            self.clientDOS = DataOutputStream(clientOutputStream);
-              
+        
+            if self.isoctave
+%             Octave 
+                self.clientSocket = javaObject('java.net.Socket', self.ip, self.port);  
+                self.clientSocket.setSoTimeout(5*1000);
+                clientInputStream = self.clientSocket.getInputStream();
+                clientOutputStream = self.clientSocket.getOutputStream();
+                self.clientDIS = javaObject('java.io.DataInputStream', clientInputStream );
+                self.clientDOS = javaObject('java.io.DataOutputStream', clientOutputStream );               
+            else                    
+%             MATLAB: Use of Java Socket class instead of Instrument Control Toolbox   
+                import java.net.Socket
+                import java.io.*              
+                self.clientSocket = Socket(self.ip, self.port);
+                self.clientSocket.setSoTimeout(5 * 1000);
+                clientInputStream = self.clientSocket.getInputStream();
+                clientOutputStream = self.clientSocket.getOutputStream();
+                self.clientDIS = DataInputStream(clientInputStream);
+                self.clientDOS = DataOutputStream(clientOutputStream);
+            end  
             
             disp(['Connection with MuLES (', self.ip, ') was successful'] );
         end
@@ -85,7 +96,7 @@ classdef MulesClient < handle
 %         Sends an arbitrary command to the MuLES software.
 %         Arguments:
 %            command: the command to be sent.
-            self.dos_write_bytes(self.clientDOS, command);
+            self.dos_write_bytes(command);
         end
 
         function flushdata(self)
@@ -119,11 +130,9 @@ classdef MulesClient < handle
         function package = getmessage(self)
 %         This gets a Message sent by MuLES an returns a byte array with the
 %         Message content
-            nBytes_4B = self.dis_read_bytes(self.clientDIS, 4);  %How large is the package (# bytes)
+            nBytes_4B = self.dis_read_bytes(4);  %How large is the package (# bytes)
             nBytes = double(swapbytes(typecast(uint8(nBytes_4B),'int32')));
-            package = self.dis_read_bytes(self.clientDIS,nBytes);           
-            
-            
+            package = self.dis_read_bytes(nBytes);                      
         end
 
         function [dev_name, dev_hardware, fs, data_format, nCh] = getheader(self)
@@ -218,24 +227,28 @@ classdef MulesClient < handle
             end
         end
         
-        function output = dis_read_bytes(~, DataInputStream_obj, n_bytes)
+        function output = dis_read_bytes(self, n_bytes)
 %         DISREAD reads N bytes from the DataInputStream Java Oject
 %         View DataInputStream Java Methods in:
 %         http://docs.oracle.com/javase/7/docs/api/java/io/DataInputStream.html
             output = uint8(zeros([n_bytes,1])); 
             for i_byte = 1 : n_bytes
-                output(i_byte) = DataInputStream_obj.readUnsignedByte();
+                output(i_byte) = self.clientDIS.readUnsignedByte();
             end
         end
         
-        function dos_write_bytes(~, DataOutpuStream_obj, bytes)
+        function dos_write_bytes(self, bytes)
 %         DOSWRITE writes data in BYTES to the DataOutputStream Java Oject
 %         View DataInputStream Java Methods in:
 %         http://docs.oracle.com/javase/7/docs/api/java/io/DataOutputStream.html            
-            for i_byte = 1 : numel(bytes)
-                a = uint8(bytes(i_byte));
-                DataOutpuStream_obj.writeByte(a);
+            for i_byte = 1 : numel(bytes)               
+                if self.isoctave
+                    a = double(bytes(i_byte));    
+                else
+                    a = uint8(bytes(i_byte));  
+                end
+                self.clientDOS.writeByte(a);
             end
-        end
+        end        
     end
 end
