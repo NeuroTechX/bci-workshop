@@ -11,7 +11,7 @@
 clear;
 close all;
 
-addpath('bci_workshop_tools\');
+addpath(genpath('bci_workshop_tools\'));
 global stop_loop
 stop_loop = false;
 
@@ -106,3 +106,5 @@ plot_channels(h_yhat_ax, decision_buffer, shift_secs, 'y-hat');
 
 % Close connection with MuLES
 mules_client.disconnect(); % Close connection
+
+rmpath(genpath('bci_workshop_tools\'));
