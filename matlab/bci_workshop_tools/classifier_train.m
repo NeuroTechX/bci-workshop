@@ -27,7 +27,7 @@ X_tmp = bsxfun(@minus, features_all, mu_ft);
 X = bsxfun(@rdivide, X_tmp, std_ft);
 
 % Train SVM, using default parameters     
-    classifier = svmtrain(X , y);
+classifier = svmtrain(y , X, '-q');
 
 end
 

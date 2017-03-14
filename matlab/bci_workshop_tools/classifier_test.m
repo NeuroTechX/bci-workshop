@@ -12,7 +12,7 @@ function [ y_hat ] = classifier_test( classifier, feature_vector, mu_ft, std_ft 
 
 % Normalize feature_vector
 x = (feature_vector - mu_ft) ./ std_ft;    
-y_hat = svmclassify(classifier, x);
+y_hat = svmpredict(double(0), double(x), classifier, '-q');
 
 end
 
