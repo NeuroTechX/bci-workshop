@@ -5,9 +5,10 @@ This document provides instructions and explanations for completing the BCI work
 This workshop is intended for people with no or limited experience with Brain-Computer Interfaces (BCIs). The workshop will teach them the basic principles that are necessary to "hack" and develop new applications with BCIs: background on brain activity and brain activity measurement with EEG, structure of a BCI, feature extraction and machine learning. Two hands-on exercises will allow the participants to 1) visualize their EEG signals and some relevant features, and 2) experiment with a very simple BCI design. This should give the participants sufficient knowledge to understand the advantages and limitations of current BCIs, and to devise their own applications.
 
 ## Programming languages for the workshop exercises
-The material for this workshop is provided in two flavors: **Python scripts** and **MATLAB scripts**.  
+The material for this workshop is provided in two flavors: **Python scripts** and **MATLAB / Octave scripts**.  
 * **Python***: a popular, multi-purpose powerful, free, open and simple to read scripting language.
 * **MATLAB**: very popular in academia, technical programing-oriented, license required, not open.
+* **GNU Octave**: high-level interpreted language, primarily intended for numerical computations, quite similar to MATLAB. Moreover, it is [free software](https://www.gnu.org/philosophy/free-sw.html)
 
 Use the one that is more convenient for you.
 
@@ -28,7 +29,7 @@ __**__ The scripts for the workshop will perfectly work for other EEG headsets s
 
 There are many other programming languages ( C, C++, Java, Processing, etc.); a diversity of **BCI toolboxes** ([OpenVIBE](http://openvibe.inria.fr/), [BCI2000](http://www.bci2000.org/wiki/index.php/Main_Page), [BCILAB](http://sccn.ucsd.edu/wiki/BCILAB), etc.); and even **other EEG devices** (OpenBCI, Emotiv EPOC, Neurosky Mindwave, etc.).
 
-Among those, we chose the **Python( or MATLAB)-Muse-MuLES** combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Because of this choice, we are stuck with Windows OS; however, the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
+Among those, we chose the **Python( or MATLAB/Octave)-Muse-MuLES** combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Because of this choice, we are stuck with Windows OS; however, the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
 
 These are the steps to setup your computer
 
@@ -38,9 +39,12 @@ These are the steps to setup your computer
 **A.4.** Pairing the Muse EEG headset and configuring MuLES  
 **A.5.** Download the code for the workshop
 
-### A.1 Installing Python required packages
-If you will use MATLAB, and it's already installed skip to next step: **A.2**
+If you will use Octave, download the newest **w64** installer (`octave-4.2.1-w64-installer.exe` in March 2017) from [https://ftp.gnu.org/gnu/octave/windows/](https://ftp.gnu.org/gnu/octave/windows/), and execute. Then proceed to step **A.2**
 
+If you will use MATLAB, and it's already installed proceed to step **A.2**
+
+
+### A.1 Installing Python required packages
 Python is a high-level scripting language that has been widely adopted in a plethora of applications. It is open, free, simple to read, and has an extensive standard library. Many packages can also be downloaded online to complement its features.
 
 Two packages are especially useful when dealing with scientific computing (as for BCIs): [NumPy](http://www.numpy.org/) and [matplotlib](http://matplotlib.org/). **NumPy** allows easy manipulation of arrays and matrices (very similar to [MATLAB](http://mathesaurus.sourceforge.net/matlab-numpy.html)), which is necessary when dealing with data such as neurophysiological signals. **Matplotlib** is similar to MATLAB's plotting functionalities, and can be used to visualize the signals and features we are working with.
@@ -100,10 +104,13 @@ Now that your computer is set up to recognize the Muse, we will configure MuLES 
 
 ### A.5. Download the code for the workshop
 
-The code for the workshop consists of Python (and MATLAB) scripts that you can find [here](https://github.com/bcimontreal/bci_workshop).
+The code for the workshop consists of Python (and MATLAB / Octave) scripts that you can find [here](https://github.com/NeuroTechX/bci-workshop).
 You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
 
-Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone git://github.com/bcimontreal/bci_workshop.git``` in the command line.
+Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in the command line.
+
+Exercise 02 uses support vector machine (SVM) algorithm to perform classification. Pre-build binaries of the [LIBSVM](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) are provided for 64-bit versions of MATLAB and Octave.
+
 
 ## Exercise 1: A simple neurofeedback interface
 
@@ -122,11 +129,11 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 ![playbutton](fig/mules.png?raw=true "MuLES GUI")
 
 ### E1.2 Running Exercise 1 script
-1. Open the script ```exercise_01.py``` in **Spyder** or ```exercise_01.m``` in **MATLAB**.
+1. Open the script ```exercise_01.py``` in **Spyder** or ```exercise_01.m``` in **MATLAB** or **Octave**.
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish in the **Set the experiment parameters section**.
 3. Run the script. In **Spyder**, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
-5. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** press the `ESC` key when in the raw EEG signal figure. Don't forget MuLES is still running as well!
+5. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** and **Octave** close the EEG signal figure, to terminate the script. Don't forget MuLES is still running as well!
 
 ![ex1_figures](fig/ex1_figures.png?raw=true "Visualization in E1.2")
 
@@ -157,8 +164,8 @@ In **Python**
 1. Open the script ```bci_workshop_tools.py```.
 2. Locate the function ```compute_feature_vector()```.
 
-In **MATLAB**
-1. Open the script ```compute_feature_vector.mat```, located in the ```bci_workshop_tools``` folder.
+In **MATLAB** or **Octave**
+1. Open the script ```compute_feature_vector.m```, located in the ```bci_workshop_tools``` folder.
 
 This function uses the [Fast Fourier Transform](http://en.wikipedia.org/wiki/Fast_Fourier_transform), an algorithm that extracts the frequency information of a time signal. It transforms the EEG time series (i.e., the raw EEG signal that you visualized above) into a list of amplitudes each corresponding to a specific frequency.
 
@@ -227,7 +234,7 @@ Let's try it now.
 4. When you hear a **first beep**; keep your eyes open and concentrate (while minimizing your movements).
 5. When you hear a **second beep**; close your eyes and relax (while minimizing your movements).
 6. When you hear a **third beep**, the classifier is trained and starts outputting decisions in the Python console: ```0``` when your eyes are open, and ```1``` when you close them. Additionally, a figure will display the decisions over a period of 30 seconds.
-7. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** press the `ESC` key when in the raw EEG signal figure. Don't forget MuLES is still running as well!
+7. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** and **Octave** close the classification prediction figure, to terminate the script. Don't forget MuLES is still running as well!
 
 ![ex1_figures](fig/ex2_figure.png?raw=true "Visualization of decisions in E2.1")
 
@@ -257,7 +264,7 @@ For example, you could send the classifier's decisions to a Processing script to
 
 In this workshop, we saw **1)** how to run a simple neurofeedback interface, and **2)** use a basic brain-computer interface. To do so, we covered the basic principles behind the use of electroencephalography signals in modern BCI applications: properties of the raw EEG time series, extraction of band power features, physiological and motion artifacts, and machine learning-based classification of mental activities.
 
-We used the following tools in this workshop: the **MuLES EEG server**, the **Python** and **MATLAB** scripting language, and the **Muse EEG headset**. All the necessary scripts for this workshop are available [online](https://github.com/bcimontreal/bci_workshop) and their re-use is strongly encouraged.
+We used the following tools in this workshop: the **MuLES EEG server**, the **Python**, **MATLAB** and **Octave** scripting languages, and the **Muse EEG headset**. All the necessary scripts for this workshop are available [online](https://github.com/NeuroTechX/bci-workshop) and their re-use is strongly encouraged.
 
 Now is **your turn** to come up with inventive ways of using neurophysiological data! You can follow the pointers in the *References* section for inspiration.
 
