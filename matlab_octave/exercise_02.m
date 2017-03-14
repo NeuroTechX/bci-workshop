@@ -17,10 +17,10 @@ stop_loop = false;
 
 % MuLES connection parameters    
 mules_ip = '127.0.0.1';
-muse_port = 30000;
+mules_port = 30000;
 
 % Creates a mules_client
-mules_client = MulesClient(mules_ip, muse_port);
+mules_client = MulesClient(mules_ip, mules_port);
 params = mules_client.getparams();
 
 % Device parameters
