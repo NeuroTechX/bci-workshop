@@ -11,6 +11,9 @@
 clear;
 close all;
 
+% Turn Output pagination OFF
+more off
+
 addpath(genpath('bci_workshop_tools\'));
 global stop_loop
 stop_loop = false;
