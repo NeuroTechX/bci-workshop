@@ -10,14 +10,16 @@
 clear;
 close all;
 
-addpath('bci_workshop_tools\');
+addpath(genpath('bci_workshop_tools\'));
+global stop_loop
+stop_loop = false;
 
 % MuLES connection parameters    
 mules_ip = '127.0.0.1';
-muse_port = 30000;
+mules_port = 30000;
 
 % Creates a mules_client
-mules_client = MulesClient(mules_ip, muse_port);
+mules_client = MulesClient(mules_ip, mules_port);
 params = mules_client.getparams();
 
 %% Set the experiment parameters
@@ -50,9 +52,9 @@ n_win_test = floor((eeg_buffer_secs - win_test_secs) / shift_secs) + 1;
 feat_buffer = zeros(n_win_test , numel(names_of_features));
 
 % Initialize the plots
-h_eeg_fig = figure();
+h_eeg_fig = figure('CloseRequestFcn',@fig_closereq);
 h_eeg_ax = axes();
-figure();
+h_featt_fig = figure('CloseRequestFcn',@fig_closereq);
 h_feat_ax = axes();
 
 
@@ -60,9 +62,9 @@ h_feat_ax = axes();
 mules_client.flushdata();  % Flush old data from MuLES       
 tone(500,500); % Beep sound
              
-disp(' Press ESC in the raw EEG signal figure window to break the While Loop');
+disp('To stop the exercise execution, close any of the figure windows');
 
-while true
+while ~stop_loop
     % 1- ACQUIRE DATA 
     eeg_data = mules_client.getdata(shift_secs, false); % Obtain EEG data from MuLES  
     eeg_buffer = updatebuffer(eeg_buffer, eeg_data); % Update EEG buffer
@@ -77,16 +79,29 @@ while true
     % 3- VISUALIZE THE RAW EEG AND THE FEATURES        
     plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
     plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
+    % Limits for X axes
+    xlim(h_eeg_ax, [0, eeg_buffer_secs]);
+    xlim(h_feat_ax, [0, eeg_buffer_secs]); 
     
     pause(0.00001);
-       
-    commandKey = get(h_eeg_fig, 'CurrentCharacter');        
-    if commandKey == char(27) %If the CurrentCharacter is ESC, end program
-        break
-    else
-        set(h_eeg_fig, 'currentch', char(0));
-    end    
+   
 end
 
+% Close figures
+delete(h_eeg_fig);
+delete(h_featt_fig);
+
 % Close connection with MuLES
-mules_client.disconnect(); % Close connection
+mules_client.disconnect();
+
+% Re-plotting figures
+h_eeg_fig = figure();
+h_eeg_ax = axes();
+h_featt_fig = figure();
+h_feat_ax = axes();
+plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
+plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
+xlim(h_eeg_ax, [0, eeg_buffer_secs]);
+xlim(h_feat_ax, [0, eeg_buffer_secs]);
+
+rmpath(genpath('bci_workshop_tools\'));

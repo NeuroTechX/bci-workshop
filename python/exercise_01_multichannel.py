@@ -21,10 +21,10 @@ if __name__ == "__main__":
     
     # MuLES connection parameters    
     mules_ip = '127.0.0.1'
-    muse_port = 30000
+    mules_port = 30000
     
     # Creates a mules_client
-    mules_client = mules.MulesClient(mules_ip, muse_port) 
+    mules_client = mules.MulesClient(mules_ip, mules_port) 
     params = mules_client.getparams() # Get the device parameters   
     
    #%% Set the experiment parameters
