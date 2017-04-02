@@ -75,7 +75,7 @@ mules_client.flushdata()  % Flushes old data from MuLES
 %% Start pulling data
 tone(500,500); % Beep sound
              
-disp(' Close the decision figure window to break the While Loop');
+disp('To stop exercise execution, close the decision figure window');
 
 while ~stop_loop
     % 1- ACQUIRE DATA 
@@ -93,18 +93,21 @@ while ~stop_loop
     
     % 3- VISUALIZE THE DECISIONS
     disp(y_hat);
-    plot_channels(h_yhat_ax, decision_buffer, shift_secs, 'y-hat');
+    plot_channels(h_yhat_ax, decision_buffer, 1/shift_secs, 'y-hat');
     
     pause(0.00001);
      
 end
 
-% The decision figure is repltoted
-figure()
-h_yhat_ax = axes();
-plot_channels(h_yhat_ax, decision_buffer, shift_secs, 'y-hat');
+% Close figure
+delete(h_yhat_fig);
 
 % Close connection with MuLES
-mules_client.disconnect(); % Close connection
+mules_client.disconnect();
+
+% Re-plotting figure
+h_yhat_fig  = figure();
+h_yhat_ax   = axes();
+plot_channels(h_yhat_ax, decision_buffer, 1/shift_secs, 'y-hat');
 
 rmpath(genpath('bci_workshop_tools\'));

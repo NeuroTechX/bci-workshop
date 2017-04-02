@@ -55,15 +55,14 @@ feat_buffer = zeros(n_win_test , numel(names_of_features));
 % Initialize the plots
 h_eeg_fig = figure('CloseRequestFcn',@fig_closereq);
 h_eeg_ax = axes();
-figure();
+h_featt_fig = figure('CloseRequestFcn',@fig_closereq);
 h_feat_ax = axes();
-
 
 %% Start pulling data
 mules_client.flushdata();  % Flush old data from MuLES       
 tone(500,500); % Beep sound
              
-disp(' Close the raw EEG signal figure window to break the While Loop');
+disp('To stop the exercise execution, close any of the figure windows');
 
 while ~stop_loop
     % 1- ACQUIRE DATA 
@@ -79,20 +78,32 @@ while ~stop_loop
     feat_buffer = updatebuffer(feat_buffer, feat_vector); % Update the feature buffer
 
     % 3- VISUALIZE THE RAW EEG AND THE FEATURES        
-    plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
     plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
-    
+    plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
+    % Limits for X axes
+    xlim(h_eeg_ax, [0, eeg_buffer_secs]);
+    xlim(h_feat_ax, [0, eeg_buffer_secs]); 
+       
     pause(0.00001);   
      
 end
 
-% The raw EEG signal figure is repltoted
-figure()
-h_eeg_ax = axes();
-plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
+% Close figures
+delete(h_eeg_fig);
+delete(h_featt_fig);
 
 % Close connection with MuLES
-mules_client.disconnect(); % Close connection
+mules_client.disconnect();
+
+% Re-plotting figures
+h_eeg_fig = figure();
+h_eeg_ax = axes();
+h_featt_fig = figure();
+h_feat_ax = axes();
+plot_channels(h_eeg_ax, eeg_buffer, sampling_frequency, name_of_channels);
+plot_channels(h_feat_ax, feat_buffer, 1/shift_secs, names_of_features);
+xlim(h_eeg_ax, [0, eeg_buffer_secs]);
+xlim(h_feat_ax, [0, eeg_buffer_secs]);
 
 rmpath(genpath('bci_workshop_tools\'));
 
