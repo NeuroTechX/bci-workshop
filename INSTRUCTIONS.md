@@ -8,7 +8,7 @@ This workshop is intended for people with no or limited experience with Brain-Co
 The material for this workshop is provided in two flavors: **Python scripts** and **MATLAB / Octave scripts**.  
 * **Python***: a popular, multi-purpose powerful, free, open and simple to read scripting language.
 * **MATLAB**: very popular in academia, technical programing-oriented, license required, not open.
-* **GNU Octave**: high-level interpreted language, primarily intended for numerical computations, quite similar to MATLAB. Moreover, it is [free software](https://www.gnu.org/philosophy/free-sw.html)
+* **GNU Octave**: high-level interpreted language, primarily intended for numerical computations, quite similar to MATLAB. Moreover, it is [free software](https://www.gnu.org/philosophy/free-sw.html).
 
 Use the one that is more convenient for you.
 
@@ -109,7 +109,7 @@ You can download everything as a ```.zip``` file using the button ![downloadzip]
 
 Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in the command line.
 
-Exercise 02 uses support vector machine (SVM) algorithm to perform classification. Pre-build binaries of the [LIBSVM](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) are provided for 64-bit versions of MATLAB and Octave.
+Exercise 02 uses the Support Vector Machine (SVM) algorithm to perform classification. Pre-build binaries of the [LIBSVM](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) are provided for 64-bit versions of MATLAB and Octave.
 
 
 ## Exercise 1: A simple neurofeedback interface
@@ -133,7 +133,7 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish in the **Set the experiment parameters section**.
 3. Run the script. In **Spyder**, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
-5. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** and **Octave** close the EEG signal figure, to terminate the script. Don't forget MuLES is still running as well!
+5. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** and **Octave** close any of the figure windows. Don't forget MuLES is still running as well!
 
 ![ex1_figures](fig/ex1_figures.png?raw=true "Visualization in E1.2")
 
