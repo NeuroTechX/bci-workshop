@@ -9,6 +9,8 @@ In this exercise, we'll try and play around with a simple interface that
 receives EEG from mulitple electrodes, computes standard frequency band powers
 and displays both the raw signals and the features.
 
+This multi-channel version could be the 'exercise' after working throught the exercise 01 script
+
 """
 
 
@@ -89,6 +91,8 @@ if __name__ == "__main__":
         # The following loop does what we see in the diagram of Exercise 1:
         # acquire data, compute features, visualize the raw EEG and the features
         while True:
+
+            # TODO: Change line plot for features to grouped bar chart
 
             """ 1- ACQUIRE DATA """
             eeg_data, timestamp = inlet.pull_chunk(timeout=1.0,

@@ -59,8 +59,8 @@ def epoching(data, samples_epoch, samples_overlap = 0):
                      samples_overlap = 0
     """
 
-    n_samples = data.shape[0]
-    n_channels = data.shape[1]
+    n_samples = len(data)
+    n_channels = 4
 
     samples_shift = samples_epoch - samples_overlap
 
