@@ -230,7 +230,7 @@ def feature_names(ch_names):
     Arguments
     ch_names: List with Electrode names
     """
-    bands = ['pwr-delta', 'pwr-theta', 'pwr-alpha' ,'pwr-beta']
+    bands = ['delta', 'theta', 'alpha' ,'beta']
 
     feat_names = []
     for band in bands:
@@ -255,10 +255,13 @@ def updatebuffer(data_buffer, new_data):
 
 
 
-def getlastdata(data_buffer, newest_samples):
+def getLastData(data_buffer, newest_samples):
     """
     Obtains from "buffer_array" the "newest samples" (N rows from the bottom of the buffer)
     """
+    print(data_buffer.shape[0])
+    print(newest_samples)
+    print(data_buffer.shape[0] - newest_samples)
     new_buffer = data_buffer[(data_buffer.shape[0] - newest_samples)::,::]
 
     return new_buffer

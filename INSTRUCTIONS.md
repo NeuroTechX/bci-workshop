@@ -47,21 +47,20 @@ Alternatively, you can [download Python 2.7 independently](http://docs.python-gu
 
 ### A.4. Pairing the Muse EEG headset with muse-lsl
 
-to stream data with lsl
+Figure out the name of your headset. We'll try and provide you this, but if you don't get it, with the Muse on, take a look at the visible bluetooth devices in your computers bluetooth settings, it'll have a name like "Muse-14D2"
 
-python muse-lsl.py
+Run the muse-lsl python script with the name of your headset
 
-the script will auto detect and connect the first muse device. In case you want a specific device or if the detection fail, find the name of the device and pass it to the script :
 
-python muse-lsl.py --name YOUR_DEVICE_NAME
+`python muse-lsl.py --name YOUR_DEVICE_NAME`
 
 You can also directly pass the mac address (this option is also faster at startup):
 
-python muse-lsl.py --address YOUR_DEVICE_ADDRESS
+`python muse-lsl.py --address YOUR_DEVICE_ADDRESS`
 
-Once the stream is up and running, you can visualize stream with
+Once the stream is up and running, you can test the stream with
 
-python lsl-viewer.py
+`python lsl-viewer.py`
 
 
 ### A.5. Download the code for the workshop
