@@ -1,76 +1,99 @@
 # BCI workshop at NeuroTechTO
 
-This document will lead users through NeuroTechTO's introductory BCI Workshop
+This document will lead users through NeuroTechX's introductory BCI Workshop.
 
 This workshop is intended for people with no or limited experience with Brain-Computer Interfaces (BCIs). The workshop will teach them the basic principles that are necessary to "hack" and develop new applications with BCIs: background on brain activity and brain activity measurement with EEG, structure of a BCI, feature extraction and machine learning. Two hands-on exercises will allow the participants to 1) visualize their EEG signals and some relevant features, and 2) experiment with a very simple BCI design. This should give the participants sufficient knowledge to understand the advantages and limitations of current BCIs, and to devise their own applications.
 
 ## Programming languages for the workshop exercises
-Most of this workshop will use the Python language, although some Node.js may be involved.
 
-## Additional software for the workshop
+This version of the workshop currently only supports **Python** 3. (The [original version](https://github.com/NeuroTechX/bci-workshop) also supports MATLAB and GNU Octave, but only works on Windows).
+http://www.choosemuse.com/research/
+Python is a very popular, multi-purpose powerful, free, open and simple to read scripting language.
 
-Additional software is required the workshop, specifically, the following tools:
+## Supported operating systems
 
-* **Muse SDK**: the software development kit provided to play around with the **Muse*** EEG headband.
+The workshop has been tested amd works on Ubuntu 17.10, Windows 10, and macOS ??.
 
-__*__ The Muse model utilized for this workshop is the 2014. Unfortunately the newer version (**Muse 2016**) is not supported for the moment in **MuLES**. If your device has 2 micro-USB ports, it's the 2014 model.
+## Required hardware for the workshop
 
-## A Installation of software for the workshop
+The [Muse 2016](http://www.choosemuse.com/research/) model is required for this version of the workshop. However, the [original version](https://github.com/NeuroTechX/bci-workshop) works with many different consumer EEG devices.
+
+TODO: INSERT PICTURE OF MUSE HERE
+
+If you are working on macOS or Windows, you will also need a BLED112 Bluetooth dongle.
+
+## A. Installation of software for the workshop
+
+There are many other programming languages ( C, C++, Java, Processing, etc.); a diversity of **BCI toolboxes** ([OpenVIBE](http://openvibe.inria.fr/), [BCI2000](http://www.bci2000.org/wiki/index.php/Main_Page), [BCILAB](http://sccn.ucsd.edu/wiki/BCILAB), etc.); and even **other EEG devices** (OpenBCI, Emotiv EPOC, Neurosky Mindwave, etc.).
+
+Among those, we chose the **Python-`muse-lsl`-Muse** combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Keep in mind though that the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
 
 These are the steps to setup your computer
 
 **A.1.** Installing Python and required packages
 **A.2.** Download the code for the workshop
-**A.3.** Pairing the Muse EEG headset with muse-lsl
+**A.3.** Pairing the Muse EEG headset with `muse-lsl`
 
 ### A.1 Installing Python required packages
+
 Python is a high-level scripting language that has been widely adopted in a plethora of applications. It is open, free, simple to read, and has an extensive standard library. Many packages can also be downloaded online to complement its features.
 
-Two packages are especially useful when dealing with scientific computing (as for BCIs): [NumPy](http://www.numpy.org/) and [matplotlib](http://matplotlib.org/). **NumPy** allows easy manipulation of arrays and matrices (very similar to [MATLAB](http://mathesaurus.sourceforge.net/matlab-numpy.html)), which is necessary when dealing with data such as neurophysiological signals. **Matplotlib** is similar to MATLAB's plotting functionalities, and can be used to visualize the signals and features we are working with.
+Two packages are especially useful when dealing with scientific computing (as for BCIs): [`numpy`](http://www.numpy.org/) and [`matplotlib`](http://matplotlib.org/). `numpy` allows easy manipulation of arrays and matrices (very similar to [MATLAB](http://mathesaurus.sourceforge.net/matlab-numpy.html)), which is necessary when dealing with data such as neurophysiological signals. `matplotlib` is similar to MATLAB's plotting functionalities, and can be used to visualize the signals and features we will be working with.
 
 Other packages we will use in this workshop are:
 
-* [scikit-learn](http://scikit-learn.org/stable/): a machine learning library.
-* [pyZMQ](https://zeromq.github.io/pyzmq/): the Python binding for ZMQ, a simple communication library.
+* [`pylsl`](https://pypi.python.org/pypi/pylsl): the Python interface to the [Lab Streaming Layer](https://github.com/sccn/labstreaminglayer) (LSL), a protocol for real-time streaming of time series data over a network.
+* [`muse-lsl`](https://github.com/alexandrebarachant/muse-lsl): a pure-Python library to connect to a Muse headband and stream data using `pylsl`,
+* [`scikit-learn`](http://scikit-learn.org/stable/): a machine learning library.
+* [`pyZMQ`](https://zeromq.github.io/pyzmq/): the Python binding for ZMQ, a simple communication library.
 
-To install Python 3, and the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 2.7 (in case of Anaconda 2) or Python 3.5 (in case of Anaconda 3), all the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
+To install Python 3, and some of the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 3.6 (in case of Anaconda 3), most of the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
 
 #### (1) Installation of Python with Anaconda (recommended)
 
-1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (if your Windows version is 32-bit, make sure to download the 32-bit installer).
-2. Execute the installer.
+1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (if your OS version is 32-bit, make sure to download the 32-bit installer).
+2. Follow the instructions to install.
 
-This installs Python, Spyder and all the packages we will need for the workshop (including scikit-learn and pyZMQ).
+This installs Python, Spyder and some of the packages we will need for the workshop (`scikit-learn` and `pyZMQ`).
 
-#### (2) Individual installation of Python and packages
-Alternatively, you can [download Python 2.7 independently](http://docs.python-guide.org/en/latest/starting/install/win/). Make sure to install ```pip``` (as explained [here]((http://docs.python-guide.org/en/latest/starting/install/win/))) and grab **NumPy**, **matplotlib** and **scikit-learn** by calling ```pip install <package_name>``` on the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
+#### (2) Individual installation of Python and packages (optional)
 
-### A.4. Pairing the Muse EEG headset with muse-lsl
+Alternatively, you can [download Python 3.6 independently](https://www.python.org/downloads/). Make sure to install `pip` and then grab `numpy`, `matplotlib` and ``scikit-learn`` by calling ```pip install <package_name>``` in the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
 
-Figure out the name of your headset. We'll try and provide you this, but if you don't get it, with the Muse on, take a look at the visible bluetooth devices in your computers bluetooth settings, it'll have a name like "Muse-14D2"
+### (3) Installation of additional Python packages
 
-Run the muse-lsl python script with the name of your headset
+Run the following command in a terminal to install `pylsl`:
 
+```
+pip install git+https://github.com/peplin/pygatt pylsl
+```
 
-`python muse-lsl.py --name YOUR_DEVICE_NAME`
-
-You can also directly pass the mac address (this option is also faster at startup):
-
-`python muse-lsl.py --address YOUR_DEVICE_ADDRESS`
-
-Once the stream is up and running, you can test the stream with
-
-`python lsl-viewer.py`
-
-
-### A.5. Download the code for the workshop
+### A.4. Download the code for the workshop
 
 The code for the workshop consists of Python scripts that you can find [here](https://github.com/NeuroTechX/bci-workshop).
 You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
 
-Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in the command line.
+Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in a terminal.
 
-Exercise 02 uses the Support Vector Machine (SVM) algorithm to perform classification. Pre-build binaries of the [LIBSVM](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) are provided for 64-bit versions of MATLAB and Octave.
+### A.5. Connecting the Muse EEG headset to `muse-lsl`
+
+To figure out the name of your Muse, look for the last 4 digits on the inner left part of the headband. The headband name will then just be `Muse-<LAST 4 DIGITS>`, e.g., `Muse-0A14`. Alternatively, if you are on Linux, you can use `hcitool` to find your devices's MAC address: ```sudo hcitool lescan```.
+
+You can now run the `muse-lsl` Python script with the name of your headset:
+
+```python muse-lsl.py --name <YOUR_DEVICE_NAME>```
+
+You can also directly pass the MAC address (this option is faster at startup):
+
+```python muse-lsl.py --address <YOUR_DEVICE_ADDRESS>```
+
+Depending on your OS and hardware, you might need to repeat this command a few times before the connection is established.
+
+Once the stream is up and running, you can test the stream by calling the following in another terminal:
+
+```python lsl-viewer.py```
+
+TODO: Add screenshot of muse-lsl's viewer
 
 
 ## Exercise 1: A simple neurofeedback interface
