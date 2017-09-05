@@ -67,6 +67,7 @@ class Muse():
         """look for ble device with a muse in the name"""
         list_devices = self.adapter.scan(timeout=10.5)
         for device in list_devices:
+            print(device)
             if name:
                 if device['name'] == name:
                     print('Found device %s : %s' % (device['name'],
