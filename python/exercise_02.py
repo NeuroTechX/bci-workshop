@@ -115,6 +115,7 @@ if __name__ == "__main__":
 
     # Initialize the buffers for storing raw EEG and decisions
     eeg_buffer = np.zeros((int(fs * buffer_length), n_channels))
+    filter_state = None  # for use with the notch filter
     decision_buffer = np.zeros((30, 1))
 
     plotter_decision = BCIw.DataPlotter(30, ['Decision'])
@@ -136,7 +137,9 @@ if __name__ == "__main__":
             ch_data = np.array(eeg_data)[:, index_channel]
 
             # Update EEG buffer
-            eeg_buffer = BCIw.update_buffer(eeg_buffer, ch_data)
+            eeg_buffer, filter_state = BCIw.update_buffer(
+                    eeg_buffer, ch_data, notch=True,
+                    filter_state=filter_state)
 
             """ 3.2 COMPUTE FEATURES AND CLASSIFY """
             # Get newest samples from the buffer
@@ -150,8 +153,8 @@ if __name__ == "__main__":
                                          std_ft)
             print(y_hat)
 
-            decision_buffer = BCIw.update_buffer(decision_buffer,
-                                                 np.reshape(y_hat, (-1, 1)))
+            decision_buffer, _ = BCIw.update_buffer(decision_buffer,
+                                                    np.reshape(y_hat, (-1, 1)))
 
             """ 3.3 VISUALIZE THE DECISIONS """
             plotter_decision.update_plot(decision_buffer)

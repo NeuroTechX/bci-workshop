@@ -1,4 +1,4 @@
-# BCI workshop at NeuroTechTO
+# BCI workshop - NeuroTechTO
 
 This document will lead users through NeuroTechX's introductory BCI Workshop.
 
@@ -107,9 +107,9 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish in the **2. SET EXPERIMENTAL PARAMETERS** section.
 3. Run the script. In **Spyder**, select an IPython console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
 4. Two figures should appear: one displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals. __**__
-5. To stop the execution of the script, press <kbd>Ctrl</kbd>+<kbd>C<kbd> in the IPython console.
+5. To stop the execution of the script, press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the IPython console.
 
-![ex1_figures](fig/ex1_figures.png?raw=true "Visualization in E1.2")
+![ex1_figures](fig/ex1_figures_new.png?raw=true "Visualization in E1.1")
 
 __**__ If you are using **Spyder** and are not seeing the two figures, you might have to setup the IPython console differently. Using the top dropdown menu, open up the `Preferences` dialog. Then, under the `IPython console` section, click on the `Graphics` tab, and change the backend to `Automatic`.
 
@@ -263,7 +263,7 @@ Now is **your turn** to come up with inventive ways of using neurophysiological 
 
 ## Authors
 
-Original version (2015): Hubert Banville & Raymundo Cassani
-Current version (September 2017): updated by Hubert Banville & Dano Morrisson
+* Original version (2015): Hubert Banville & Raymundo Cassani
+* Current version (September 2017): updated by Hubert Banville & Dano Morrison
 
 If you use code from this workshop please don't forget to follow the terms of the [MIT License](http://opensource.org/licenses/MIT).

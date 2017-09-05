@@ -15,6 +15,10 @@ from subprocess import call
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import svm
+from scipy.signal import butter, lfilter, lfilter_zi
+
+
+NOTCH_B, NOTCH_A = butter(4, np.array([55, 65])/(256/2), btype='bandstop')
 
 
 def plot_multichannel(data, params=None):
@@ -273,7 +277,7 @@ def get_feature_names(ch_names):
     return feat_names
 
 
-def update_buffer(data_buffer, new_data):
+def update_buffer(data_buffer, new_data, notch=False, filter_state=None):
     """
     Concatenates "new_data" into "data_buffer", and returns an array with
     the same size as "data_buffer"
@@ -281,10 +285,17 @@ def update_buffer(data_buffer, new_data):
     if new_data.ndim == 1:
         new_data = new_data.reshape(-1, data_buffer.shape[1])
 
+    if notch:
+        if filter_state is None:
+            filter_state = np.tile(lfilter_zi(NOTCH_B, NOTCH_A),
+                                   (data_buffer.shape[1], 1)).T
+        new_data, filter_state = lfilter(NOTCH_B, NOTCH_A, new_data, axis=0,
+                                         zi=filter_state)
+
     new_buffer = np.concatenate((data_buffer, new_data), axis=0)
     new_buffer = new_buffer[new_data.shape[0]:, :]
 
-    return new_buffer
+    return new_buffer, filter_state
 
 
 def get_last_data(data_buffer, newest_samples):

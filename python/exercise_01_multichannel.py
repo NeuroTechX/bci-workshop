@@ -77,6 +77,7 @@ if __name__ == "__main__":
 
     # Initialize raw EEG data buffer (for plotting)
     eeg_buffer = np.zeros((int(fs * buffer_length), n_channels))
+    filter_state = None  # for use with the notch filter
 
     # Compute the number of epochs in "buffer_length" (used for plotting)
     n_win_test = int(np.floor((buffer_length - epoch_length) /
@@ -111,7 +112,9 @@ if __name__ == "__main__":
             ch_data = np.array(eeg_data)[:, index_channel]
 
             # Update EEG buffer
-            eeg_buffer = BCIw.update_buffer(eeg_buffer, ch_data)
+            eeg_buffer, filter_state = BCIw.update_buffer(
+                    eeg_buffer, ch_data, notch=True,
+                    filter_state=filter_state)
 
             """ 3.2 COMPUTE FEATURES """
             # Get newest samples from the buffer
@@ -120,8 +123,8 @@ if __name__ == "__main__":
 
             # Compute features
             feat_vector = BCIw.compute_feature_vector(data_epoch, fs)
-            feat_buffer = BCIw.update_buffer(feat_buffer,
-                                             np.asarray([feat_vector]))
+            feat_buffer, _ = BCIw.update_buffer(feat_buffer,
+                                                np.asarray([feat_vector]))
 
             """ 3.3 VISUALIZE THE RAW EEG AND THE FEATURES """
             plotter_eeg.update_plot(eeg_buffer)
