@@ -7,6 +7,7 @@ Description:
 In this exercise, we'll try and play around with a simple interface that
 receives EEG from one electrode, computes standard frequency band powers
 and displays both the raw signals and the features.
+
 """
 
 import numpy as np  # Module that simplifies computations on matrices
@@ -53,17 +54,15 @@ if __name__ == "__main__":
     epoch_length = 1
 
     # Amount of overlap between two consecutive epochs (in seconds)
-    overlap_length = 0.5
+    overlap_length = 0.8
 
     # Amount to 'shift' the start of each next consecutive epoch
     shift_length = epoch_length - overlap_length
 
     # Index of the channel (electrode) to be used
     # 0 = left ear, 1 = left forehead, 2 = right forehead, 3 = right ear
-    index_channel = 1
-
-    # Name of our channel for plotting purposes
-    ch_names = ['ch1']
+    index_channel = [0]
+    ch_names = ['ch1']  # Name of our channel for plotting purposes
 
     # Get names of features
     # ex. ['delta - CH1', 'pwr-theta - CH1', 'pwr-alpha - CH1',...]
@@ -83,8 +82,8 @@ if __name__ == "__main__":
     feat_buffer = np.zeros((n_win_test, len(feature_names)))
 
     # Initialize the plots
-    plotter_eeg = BCIw.dataPlotter(fs * buffer_length, ch_names, fs)
-    plotter_feat = BCIw.dataPlotter(n_win_test, feature_names,
+    plotter_eeg = BCIw.DataPlotter(fs * buffer_length, ch_names, fs)
+    plotter_feat = BCIw.DataPlotter(n_win_test, feature_names,
                                     1 / shift_length)
 
 
@@ -93,6 +92,7 @@ if __name__ == "__main__":
     # The try/except structure allows to quit the while loop by aborting the
     # script with <Ctrl-C>
     print('Press Ctrl-C in the console to break the while loop.')
+
     try:
         # The following loop does what we see in the diagram of Exercise 1:
         # acquire data, compute features, visualize raw EEG and the features
@@ -100,14 +100,15 @@ if __name__ == "__main__":
 
             """ 3.1 ACQUIRE DATA """
             # Obtain EEG data from the LSL stream
-            eeg_data, timestamp = inlet.pull_chunk(timeout=1.0,
-                                                   max_samples=12)
+            eeg_data, timestamp = inlet.pull_chunk(
+                    timeout=1, max_samples=int(shift_length * fs))
 
-            # Remove all the channels except the one we're interested in
-            ch_data = np.array(eeg_data)[:, [index_channel]]
+            # Only keep the channel we're interested in
+            ch_data = np.array(eeg_data)[:, index_channel]
 
             # Update EEG buffer
-            eeg_buffer = BCIw.updatebuffer(eeg_buffer, ch_data)
+            eeg_buffer = BCIw.update_buffer(eeg_buffer, ch_data)
+
 
             """ 3.2 COMPUTE FEATURES """
             # Get newest samples from the buffer
@@ -116,14 +117,13 @@ if __name__ == "__main__":
 
             # Compute features
             feat_vector = BCIw.compute_feature_vector(data_epoch, fs)
-            feat_buffer = BCIw.updatebuffer(feat_buffer,
-                                            np.asarray([feat_vector]))
+            feat_buffer = BCIw.update_buffer(feat_buffer,
+                                             np.asarray([feat_vector]))
 
             """ 3.3 VISUALIZE THE RAW EEG AND THE FEATURES """
-            plotter_eeg.updatePlot(eeg_buffer)
-            plotter_feat.updatePlot((feat_buffer))
-
-            plt.pause(0.001)
+            plotter_eeg.update_plot(eeg_buffer)
+            plotter_feat.update_plot(feat_buffer)
+            plt.pause(0.00001)
 
     except KeyboardInterrupt:
         print('Closing!')
