@@ -46,7 +46,6 @@ if __name__ == "__main__":
         ch = ch.next_sibling()
         ch_names.append(ch.child_value('label'))
 
-
     """ 2. SET EXPERIMENTAL PARAMETERS """
 
     # Length of the EEG data buffer (in seconds)
@@ -76,7 +75,6 @@ if __name__ == "__main__":
     # Number of seconds to collect training data for (one class)
     training_length = 20
 
-
     """ 3. RECORD TRAINING DATA """
 
     # Record data for mental activity 0
@@ -99,7 +97,6 @@ if __name__ == "__main__":
     eeg_epochs1 = BCIw.epoch(eeg_data1, epoch_length * fs,
                              overlap_length * fs)
 
-
     """ 4. COMPUTE FEATURES AND TRAIN CLASSIFIER """
 
     feat_matrix0 = BCIw.compute_feature_matrix(eeg_epochs0, fs)
@@ -110,7 +107,6 @@ if __name__ == "__main__":
 
     BCIw.beep()
 
-
     """ 5. USE THE CLASSIFIER IN REAL-TIME"""
 
     # Initialize the buffers for storing raw EEG and decisions
@@ -119,7 +115,6 @@ if __name__ == "__main__":
     decision_buffer = np.zeros((30, 1))
 
     plotter_decision = BCIw.DataPlotter(30, ['Decision'])
-
 
     # The try/except structure allows to quit the while loop by aborting the
     # script with <Ctrl-C>

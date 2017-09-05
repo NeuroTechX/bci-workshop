@@ -41,7 +41,6 @@ if __name__ == "__main__":
     # collected in a second. This influences our frequency band calculation.
     fs = int(info.nominal_srate())
 
-
     """ 2. SET EXPERIMENTAL PARAMETERS """
 
     # Length of the EEG data buffer (in seconds)
@@ -66,7 +65,6 @@ if __name__ == "__main__":
     # ex. ['delta - CH1', 'pwr-theta - CH1', 'pwr-alpha - CH1',...]
     feature_names = BCIw.get_feature_names(ch_names)
 
-
     """ 3. INITIALIZE BUFFERS """
 
     # Initialize raw EEG data buffer (for plotting)
@@ -84,7 +82,6 @@ if __name__ == "__main__":
     plotter_eeg = BCIw.DataPlotter(fs * buffer_length, ch_names, fs)
     plotter_feat = BCIw.DataPlotter(n_win_test, feature_names,
                                     1 / shift_length)
-
 
     """ 3. GET DATA """
 
@@ -109,7 +106,6 @@ if __name__ == "__main__":
             eeg_buffer, filter_state = BCIw.update_buffer(
                     eeg_buffer, ch_data, notch=True,
                     filter_state=filter_state)
-
 
             """ 3.2 COMPUTE FEATURES """
             # Get newest samples from the buffer

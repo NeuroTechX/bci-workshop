@@ -45,7 +45,6 @@ if __name__ == "__main__":
         ch = ch.next_sibling()
         ch_names.append(ch.child_value('label'))
 
-
     """ 2. SET EXPERIMENTAL PARAMETERS """
 
     # Length of the EEG data buffer (in seconds)
@@ -72,8 +71,7 @@ if __name__ == "__main__":
     # ex. ['delta - CH1', 'pwr-theta - CH1', 'pwr-alpha - CH1',...]
     feature_names = BCIw.get_feature_names(ch_names)
 
-
-    """ 3. INITIALIZE BUFFERS """
+    """3. INITIALIZE BUFFERS """
 
     # Initialize raw EEG data buffer (for plotting)
     eeg_buffer = np.zeros((int(fs * buffer_length), n_channels))
@@ -90,7 +88,6 @@ if __name__ == "__main__":
     plotter_eeg = BCIw.DataPlotter(fs * buffer_length, ch_names, fs)
     plotter_feat = BCIw.DataPlotter(n_win_test, feature_names,
                                     1 / shift_length)
-
 
     """ 3. GET DATA """
 

@@ -21,6 +21,8 @@ class LiveBarGraph(object):
         self.ch_names = ch_names
         self.n_bars = self.band_names * self.ch_names
 
+        self.x =
+
         self.fig, self.ax = plt.subplots()
         self.ax.set_ylim((0, 1))
 
@@ -41,3 +43,8 @@ if __name__ == '__main__':
     while True:
         bar.update(np.random.random(10))
         plt.pause(0.1)
+
+
+
+
+
