@@ -7,24 +7,23 @@ This workshop is intended for people with no or limited experience with Brain-Co
 ## Programming languages for the workshop exercises
 
 This version of the workshop currently only supports **Python** 3. (The [original version](https://github.com/NeuroTechX/bci-workshop) also supports MATLAB and GNU Octave, but only works on Windows).
-http://www.choosemuse.com/research/
 Python is a very popular, multi-purpose powerful, free, open and simple to read scripting language.
 
 ## Supported operating systems
 
-The workshop has been tested amd works on Ubuntu 17.10, Windows 10, and macOS ??.
+The workshop has been tested and works on Ubuntu 17.10, Windows 10, and macOS.
 
 ## Required hardware for the workshop
 
-The [Muse 2016](http://www.choosemuse.com/research/) model is required for this version of the workshop. However, the [original version](https://github.com/NeuroTechX/bci-workshop) works with many different consumer EEG devices.
+The [Muse 2016](http://www.choosemuse.com/research/) model is required for this version of the workshop. However, the [original version of the workshop](https://github.com/NeuroTechX/bci-workshop) works with many different consumer EEG devices.
 
-![intro_figures](fig/muse.png?raw=true "The Muse EEG headband.")
+![muse_diagram](fig/muse.png?raw=true "The Muse EEG headband.")
 
 If you are working on macOS or Windows, you will also need a BLED112 Bluetooth dongle.
 
 ## A. Installation of software for the workshop
 
-There are many other programming languages ( C, C++, Java, Processing, etc.); a diversity of **BCI toolboxes** ([OpenVIBE](http://openvibe.inria.fr/), [BCI2000](http://www.bci2000.org/wiki/index.php/Main_Page), [BCILAB](http://sccn.ucsd.edu/wiki/BCILAB), etc.); and even **other EEG devices** (OpenBCI, Emotiv EPOC, Neurosky Mindwave, etc.).
+There are many other programming languages ( C, C++, Java, Processing, etc.); a diversity of **BCI toolboxes** ([OpenVIBE](http://openvibe.inria.fr/), [BCI2000](http://www.bci2000.org/wiki/index.php/Main_Page), [BCILAB](http://sccn.ucsd.edu/wiki/BCILAB), etc.); and of course **other EEG devices** (OpenBCI, Emotiv EPOC, Neurosky Mindwave, etc.).
 
 Among those, we chose the **Python-`muse-lsl`-Muse** combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Keep in mind though that the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
 
@@ -45,16 +44,15 @@ Other packages we will use in this workshop are:
 * [`pylsl`](https://pypi.python.org/pypi/pylsl): the Python interface to the [Lab Streaming Layer](https://github.com/sccn/labstreaminglayer) (LSL), a protocol for real-time streaming of time series data over a network.
 * [`muse-lsl`](https://github.com/alexandrebarachant/muse-lsl): a pure-Python library to connect to a Muse headband and stream data using `pylsl`,
 * [`scikit-learn`](http://scikit-learn.org/stable/): a machine learning library.
-* [`pyZMQ`](https://zeromq.github.io/pyzmq/): the Python binding for ZMQ, a simple communication library.
 
-To install Python 3, and some of the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 3.6 (in case of Anaconda 3), most of the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
+To install Python 3, and some of the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 3.6 (in the case of Anaconda 3), most of the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
 
 #### (1) Installation of Python with Anaconda (recommended)
 
 1. Download the [Anaconda graphical installer](http://continuum.io/downloads) (if your OS version is 32-bit, make sure to download the 32-bit installer).
 2. Follow the instructions to install.
 
-This installs Python, Spyder and some of the packages we will need for the workshop (`scikit-learn` and `pyZMQ`).
+This installs Python, Spyder and some of the packages we will need for the workshop (`numpy`, `matplotlib` and `scikit-learn`).
 
 #### (2) Individual installation of Python and packages (optional)
 
@@ -62,30 +60,30 @@ Alternatively, you can [download Python 3.6 independently](https://www.python.or
 
 ### (3) Installation of additional Python packages
 
-Run the following command in a terminal__*__ to install `pygatt` and `pylsl`:
+Run the following command in a terminal __*__ to install `pygatt` and `pylsl`:
 
 ```
 pip install git+https://github.com/peplin/pygatt pylsl
 ```
 
-__*__: The way to open a terminal depends on your OS. On Windows, press `<kbd>Windows</kbd> + <kbd>R</kbd>`, type `cmd`, and then press <kbd>Enter</kbd>. On macOS, press <kbd>spacebar</kbd>, type `terminal`, and press <kbd>Enter</kbd>. On Ubuntu, <kbd>Ctrl</kbd>+<kbd>alt</kbd>+<kbd>T</kbd> will open a terminal.
+__*__ The way to open a terminal depends on your OS. On Windows, press <kbd>Windows</kbd> + <kbd>R</kbd>, type `cmd`, and then press <kbd>Enter</kbd>. On macOS, press <kbd>spacebar</kbd>, type `terminal`, and press <kbd>Enter</kbd>. On Ubuntu, <kbd>Ctrl</kbd>+<kbd>alt</kbd>+<kbd>T</kbd> will open a terminal.
 
-### A.4. Download the code for the workshop
+### A.2. Download the code for the workshop
 
-The code for the workshop consists of Python scripts that you can find [here](https://github.com/NeuroTechX/bci-workshop).
+The code for the workshop consists of Python scripts that you can find [here](https://github.com/jdpigeon/bci-workshop).
 You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
 
-Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in a terminal.
+Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/jdpigeon/bci-workshop.git``` in a terminal.
 
-### A.5. Connecting the Muse EEG headset to `muse-lsl`
+### A.3. Connecting the Muse to `muse-lsl`
 
 To figure out the name of your Muse, look for the last 4 digits on the inner left part of the headband. The headband name will then just be `Muse-<LAST 4 DIGITS>`, e.g., `Muse-0A14`. Alternatively, if you are on Linux, you can use `hcitool` to find your devices's MAC address: ```sudo hcitool lescan```.
 
-You can now run the `muse-lsl` Python script with the name of your headset:
+You can now run the `muse-lsl` Python script with the name of your headset in a terminal:
 
 ```python muse-lsl.py --name <YOUR_DEVICE_NAME>```
 
-You can also directly pass the MAC address (this option is faster at startup):
+You can also directly pass the MAC address if you found it with `hcitool` or by some other way (this option is faster at startup):
 
 ```python muse-lsl.py --address <YOUR_DEVICE_ADDRESS>```
 
@@ -138,7 +136,6 @@ Since the raw EEG signals are not easy to read, we will extract **features** tha
 
 The most often used features to describe EEG are frequency band powers.
 
-In **Python**
 1. Open the script ```bci_workshop_tools.py```.
 2. Locate the function ```compute_feature_vector()```.
 
@@ -154,7 +151,7 @@ In EEG analysis, we typically look at ranges of frequencies, that we call *frequ
 
 These are the features that you visualized in E1.1 in Figure 2.
 
-We expect each band to reflect specific mental activities. For example, we know that closing the eyes and relaxing provokes an increase in Alpha band activity and a decrease in Beta band activity, especially at the back of the head. We will try to reproduce this result now.
+We expect each band to loosely reflect different mental activities. For example, we know that closing the eyes and relaxing provokes an increase in Alpha band activity and a decrease in Beta band activity, especially at the back of the head. We will try to reproduce this result now.
 
 1. Open the script ```exercise_01_one_channel.py```.
 2. Change the value of the ```buffer_length``` parameter to around 40.
@@ -198,7 +195,7 @@ In a Brain-Computer Interface, we use classifiers to identify which type of ment
 3. *Train* the classifier.
 4. Use the trained classifier by giving it new EEG data, and asking for a decision on which mental activity this represents.
 
-Brain-Computer Interfaces rely heavily on **machine learning**, the field devoted to algorithms that learn from data, such as classifiers. You might have already understood why: in a typical EEG application we have several features (e.g. many band powers) and we might not know *a priori* what the mental activity we need to classify looks like.
+Brain-Computer Interfaces rely heavily on **machine learning**, the field devoted to algorithms that learn from data, such as classifiers. You might have already understood why: in a typical EEG application we have several features (e.g. many band powers) and we might not know *a priori* what the mental activity we need to classify looks like. Letting the machine find the optimal combination of features by itself simplifies the whole process.
 
 Let's try it now.
 
@@ -235,14 +232,14 @@ If you have some experience with machine learning or are interested by the topic
 * Get an estimate of the classifier's performance by dividing the data into a training and a testing sets.
 * How much data is necessary to attain stable performance?
 * Can a classifier trained on someone be used on someone else?
-* Visualize the importance of each feature.
-* Run model selection and hyperparameter search.
+* Visualize the importance of each feature. Are the most important features the one we expect?
+* Run model selection and hyperparameter search. Can you find an algorithm that is better suited to our task?
+
+Also, keeping in mind our earlier discussion of **artefacts**, what is the impact of artefacts during training and/or live testing?
 
 #### Sending decisions to an external application
 
-Once your BCI framework is functional, you can start thinking about sending your EEG features or classifier decisions to an external application.
-Many different libraries can be used for that, beginning with standard TCP/IP communication implementations (e.g. Python's [socket](https://docs.python.org/3/library/socket.html) module).
-Another option is [`pyZMQ`](https://zeromq.github.io/pyzmq/), which allows simple communication between a Python application and any programming language supporting the [ZMQ](http://zeromq.org/) protocol.
+Once your BCI framework is functional, you can start thinking about sending your EEG features or classifier decisions to an external application. Many different libraries can be used for that, beginning with standard TCP/IP communication implementations (e.g. Python's [socket](https://docs.python.org/3/library/socket.html) module). Another option is [`pyZMQ`](https://zeromq.github.io/pyzmq/), which allows simple communication between a Python application and any programming language supporting the [ZMQ](http://zeromq.org/) protocol.
 
 For example, you could send the classifier's decisions to a [`Processing`](https://processing.org/) script to create simple animations based on your mental activity.
 
@@ -266,7 +263,7 @@ Now is **your turn** to come up with inventive ways of using neurophysiological 
 
 ## Authors
 
-Original version (2015): Hubert Banville & Raymundo Cassani (2015)
+Original version (2015): Hubert Banville & Raymundo Cassani
 Current version (September 2017): updated by Hubert Banville & Dano Morrisson
 
 If you use code from this workshop please don't forget to follow the terms of the [MIT License](http://opensource.org/licenses/MIT).
