@@ -1,4 +1,4 @@
-c# BCI workshop - NeuroTechTO
+# BCI workshop - NeuroTechTO
 
 This document will lead users through NeuroTechX's introductory BCI Workshop.
 
@@ -30,7 +30,9 @@ Among those, we chose the **Python-`muse-lsl`-Muse** combination as it provides 
 These are the steps to setup your computer
 
 **A.1.** Installing Python and required packages
+
 **A.2.** Download the code for the workshop
+
 **A.3.** Pairing the Muse EEG headset with `muse-lsl`
 
 ### A.1 Installing Python and required packages
@@ -56,17 +58,33 @@ This installs Python, Spyder and some of the packages we will need for the works
 
 #### Individual installation of Python and packages (optional)
 
-Alternatively, you can [download Python 3.6 independently](https://www.python.org/downloads/). Make sure to install `pip` and then grab `numpy`, `matplotlib` and ``scikit-learn`` by calling ```pip install <package_name>``` in the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
+Alternatively, you can [download Python 3.6 independently](https://www.python.org/downloads/). Make sure to install `pip` and then grab `numpy`, `matplotlib`, `scipy`, `seaborn` and ``scikit-learn`` by calling ```pip install <package_name>``` in the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
 
 #### Installation of additional Python packages
 
-Run the following command in a terminal __*__ to install `pygatt` and `pylsl`:
+Run the following command in a terminal __*__ to install the remaining packages:
 
 ```
-pip install git+https://github.com/peplin/pygatt pylsl
+pip install git+https://github.com/peplin/pygatt pylsl bitstring pexpect
 ```
 
-__*__ The way to open a terminal depends on your OS. On Windows, press <kbd>Windows</kbd> + <kbd>R</kbd>, type `cmd`, and then press <kbd>Enter</kbd>. On macOS, press <kbd>spacebar</kbd>, type `terminal`, and press <kbd>Enter</kbd>. On Ubuntu, <kbd>Ctrl</kbd>+<kbd>alt</kbd>+<kbd>T</kbd> will open a terminal.
+**Fixing connection bug in `pygatt`!**: The latest version of `pygatt` can throw an error on Windows and macOS when trying to connect to a device (see [here](https://github.com/peplin/pygatt/issues/118)). To avoid it, we need to add a simple line of code to the file `bgapi.py`. First, find the folder where that file is by running the following in a terminal:
+
+```
+python
+import os
+import pygatt
+print(os.path.join(os.path.dirname(pygatt.__file__), 'backends', 'bgapi', 'bgapi.py'))
+```
+
+Then, add the following to line 191 of `bgapi.py` and save:
+```
+time.sleep(.25)
+```
+
+This should fix it!
+
+__*__ The way to open a terminal depends on your OS. On Windows, press <kbd>Windows</kbd> + <kbd>R</kbd>, type `cmd`, and then press <kbd>Enter</kbd>. On macOS, press <kbd>Apple</kbd>+<kbd>spacebar</kbd>, type `terminal`, and press <kbd>Enter</kbd>. On Ubuntu, <kbd>Ctrl</kbd>+<kbd>alt</kbd>+<kbd>T</kbd> will open a terminal.
 
 ### A.2. Download the code for the workshop
 
@@ -79,7 +97,7 @@ Alternatively, if you have ```git``` installed on your computer, you can clone t
 
 To figure out the name of your Muse, look for the last 4 digits on the inner left part of the headband. The headband name will then just be `Muse-<LAST 4 DIGITS>`, e.g., `Muse-0A14`. Alternatively, if you are on Linux, you can use `hcitool` to find your devices's MAC address: ```sudo hcitool lescan```.
 
-With your Muse turned on, you should now be able to connect to it with your computer by running `muse-lsl` Python script with the name of your headset in a terminal:
+With your Muse turned on, you should now be able to connect to it with your computer. Use the `cd` command to navigate to where you downloaded the code for the workshop (e.g., `cd C:\Users\Hubert\Documents\bci-workshop\python`). Then, run the `muse-lsl` Python script with the name of your headset in a terminal:
 
 ```python muse-lsl.py --name <YOUR_DEVICE_NAME>```
 
@@ -89,7 +107,7 @@ You can also directly pass the MAC address if you found it with `hcitool` or by 
 
 Depending on your OS and hardware, you might need to repeat this command a few times before the connection is established.
 
-Once the stream is up and running, you can test the stream by calling the following in another terminal:
+Once the stream is up and running, you can test the stream by calling the following in another terminal (make sure to `cd` to the right directory first as above):
 
 ```python lsl-viewer.py```
 
