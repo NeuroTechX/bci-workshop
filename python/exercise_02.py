@@ -11,6 +11,7 @@ and can then classify similar unseen information.
 
 """
 
+import argparse
 import numpy as np  # Module that simplifies computations on matrices
 import matplotlib.pyplot as plt  # Module used for plotting
 from pylsl import StreamInlet, resolve_byprop  # Module to receive EEG data
@@ -19,6 +20,14 @@ import bci_workshop_tools as BCIw  # Our own functions for the workshop
 
 
 if __name__ == "__main__":
+
+    """ 0. PARSE ARGUMENTS """
+    parser = argparse.ArgumentParser(description='BCI Workshop example 2')
+    parser.add_argument('channels', metavar='N', type=int, nargs='*',
+        default=[0, 1, 2, 3],
+        help='channel number to use. If not specified, all the channels are used')
+
+    args = parser.parse_args()
 
     """ 1. CONNECT TO EEG STREAM """
 
@@ -63,7 +72,7 @@ if __name__ == "__main__":
 
     # Index of the channel (electrode) to be used
     # 0 = left ear, 1 = left forehead, 2 = right forehead, 3 = right ear
-    index_channel = [0, 1, 2, 3]
+    index_channel = args.channels
     # Name of our channel for plotting purposes
     ch_names = [ch_names[i] for i in index_channel]
     n_channels = len(index_channel)
