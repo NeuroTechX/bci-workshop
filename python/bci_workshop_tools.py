@@ -206,11 +206,12 @@ def train_classifier(feature_matrix_0, feature_matrix_1, algorithm='SVM'):
     # Train SVM using default parameters
     clf = svm.SVC()
     clf.fit(X, y)
+    score = clf.score(X, y.ravel())
 
     # Visualize decision boundary
 #    plot_classifier_training(clf, X, y, features_to_plot=[0, 1])
 
-    return clf, mu_ft, std_ft
+    return clf, mu_ft, std_ft, score
 
 
 def test_classifier(clf, feature_vector, mu_ft, std_ft):
