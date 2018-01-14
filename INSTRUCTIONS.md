@@ -113,6 +113,8 @@ Once the stream is up and running, you can test the stream by calling the follow
 
 ![ex1_figures](fig/lsl_viewer.png?raw=true "Visualizing EEG with `lsl-viewer.py`")
 
+If the data is out of bounds, press `d` to toggle filter.
+
 ## Exercise 1: A simple neurofeedback interface
 
 In this first exercise, we will learn how to visualize the raw EEG signals that come from the Muse inside a Python application. We will also extract and visualize basic features of the raw EEG signals. This will showcase a first basic use of a Brain-Computer Interface: a so-called neurofeedback interface.
