@@ -111,8 +111,10 @@ if __name__ == "__main__":
     feat_matrix0 = BCIw.compute_feature_matrix(eeg_epochs0, fs)
     feat_matrix1 = BCIw.compute_feature_matrix(eeg_epochs1, fs)
 
-    [classifier, mu_ft, std_ft] = BCIw.train_classifier(
+    [classifier, mu_ft, std_ft, score] = BCIw.train_classifier(
             feat_matrix0, feat_matrix1, 'SVM')
+
+    print(str(score * 100) + '% correctly predicted')
 
     BCIw.beep()
 
