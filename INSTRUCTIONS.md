@@ -15,7 +15,7 @@ The workshop has been tested and works on Ubuntu 17.10, Windows 10, and macOS.
 
 ## Required hardware for the workshop
 
-The [Muse 2016](http://www.choosemuse.com/research/) model is required for this version of the workshop. However, the [original version of the workshop](https://github.com/NeuroTechX/bci-workshop) works with many different consumer EEG devices.
+The [Muse 2016](http://www.choosemuse.com/research/) model is the best option for this version of the workshop. However, if you are working with a older device you can use the muse-io command line tool to get the data.
 
 ![muse_diagram](fig/muse.png?raw=true "The Muse EEG headband.")
 
@@ -68,6 +68,13 @@ Run the following command in a terminal __*__ to install the remaining packages:
 pip install git+https://github.com/peplin/pygatt pylsl bitstring pexpect
 ```
 
+If you do not have pip installed on your machine, you can do so via the Anaconda prompt. Here are the instructions
+
+  1. Search on your machine for Open Anaconda prompt and open it
+  2. Put in the following command: `conda install pip`
+
+If you don't have git installed on your machine, you can download it [here](https://git-scm.com/downloads)
+
 **Fixing connection bug in `pygatt`!**: The latest version of `pygatt` can throw an error on Windows and macOS when trying to connect to a device (see [here](https://github.com/peplin/pygatt/issues/118)). To avoid it, we need to add a simple line of code to the file `bgapi.py`. First, find the folder where that file is by running the following in a terminal:
 
 ```
@@ -111,9 +118,17 @@ Once the stream is up and running, you can test the stream by calling the follow
 
 ```python lsl-viewer.py```
 
+
 ![ex1_figures](fig/lsl_viewer.png?raw=true "Visualizing EEG with `lsl-viewer.py`")
 
 If the data is out of bounds, press `d` to toggle filter.
+
+### A.4. Connecting to lsl via muse-io
+
+If you have an older device that doesn't run on Bluetooth Low Energy, you will need to run muse-io lsl. In order to do this, you will first be required to get [Muse Research Tool which can be found here](http://developer.choosemuse.com/research-tools). Once it's installed, go to your command prompt and enter the following
+```
+muse-io --device Muse-<your muse number> --osc osc.udp://localhost:5000 --lsl-eeg EEG
+```
 
 ## Exercise 1: A simple neurofeedback interface
 
