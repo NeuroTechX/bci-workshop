@@ -106,17 +106,17 @@ To figure out the name of your Muse, look for the last 4 digits on the inner lef
 
 With your Muse turned on, you should now be able to connect to it with your computer. Use the `cd` command to navigate to where you downloaded the code for the workshop (e.g., `cd C:\Users\Hubert\Documents\bci-workshop\python`). Then, run the `muse-lsl` Python script with the name of your headset in a terminal:
 
-```python muse-lsl.py --name <YOUR_DEVICE_NAME>```
+```python -u muse-lsl.py --name <YOUR_DEVICE_NAME>```
 
 You can also directly pass the MAC address if you found it with `hcitool` or by some other way (this option is faster at startup):
 
-```python muse-lsl.py --address <YOUR_DEVICE_ADDRESS>```
+```python -u muse-lsl.py --address <YOUR_DEVICE_ADDRESS>```
 
 Depending on your OS and hardware, you might need to repeat this command a few times before the connection is established.
 
 Once the stream is up and running, you can test the stream by calling the following in another terminal (make sure to `cd` to the right directory first as above):
 
-```python lsl-viewer.py```
+```python -u lsl-viewer.py```
 
 
 ![ex1_figures](fig/lsl_viewer.png?raw=true "Visualizing EEG with `lsl-viewer.py`")
