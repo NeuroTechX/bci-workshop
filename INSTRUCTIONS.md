@@ -6,7 +6,7 @@ This workshop is intended for people with no or limited experience with Brain-Co
 
 ## Programming languages for the workshop exercises
 
-This version of the workshop currently only supports **Python** 3. (The [original version](https://github.com/NeuroTechX/bci-workshop) also supports MATLAB and GNU Octave, but only works on Windows).
+This version of the workshop currently only supports **Python 3**. (The [original version](https://github.com/NeuroTechX/bci-workshop) also supports MATLAB and GNU Octave, but only works on Windows).
 Python is a very popular, multi-purpose powerful, free, open and simple to read scripting language.
 
 ## Supported operating systems
@@ -19,7 +19,8 @@ The [Muse 2016](http://www.choosemuse.com/research/) model is the best option fo
 
 ![muse_diagram](fig/muse.png?raw=true "The Muse EEG headband.")
 
-If you are working on macOS or Windows, you will also need a BLED112 Bluetooth dongle.
+If you are working on macOS or Windows, you will also need a BLED112 Bluetooth dongle. This workshop was tested on Bluegiga BLED112 Bluetooth® Low Energy Dongle and works well. Additionally, for Windows, you can also use [BlueMuse](https://github.com/kowalej/BlueMuse).
+
 
 ## A. Installation of software for the workshop
 
@@ -84,9 +85,10 @@ import pygatt
 print(os.path.join(os.path.dirname(pygatt.__file__), 'backends', 'bgapi', 'bgapi.py'))
 ```
 
-Then, add the following to line 191 of `bgapi.py` and save:
+Then, as of this writing, add the following to line 202 of `bgapi.py`, or in between `self._ser.close()` and `self._open_serial_port()` and save:
+
 ```
-time.sleep(.25)
+time.sleep(1)
 ```
 
 This should fix it!
