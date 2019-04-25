@@ -75,24 +75,6 @@ If you do not have pip installed on your machine, you can do so via the Anaconda
 
 If you don't have git installed on your machine, you can download it [here](https://git-scm.com/downloads)
 
-**Fixing connection bug in `pygatt`!**: The latest version of `pygatt` can throw an error on Windows and macOS when trying to connect to a device (see [here](https://github.com/peplin/pygatt/issues/118)). To avoid it, we need to add a simple line of code to the file `bgapi.py`. First, find the folder where that file is by running the following in a terminal:
-
-```
-python
-import os
-import pygatt
-print(os.path.join(os.path.dirname(pygatt.__file__), 'backends', 'bgapi', 'bgapi.py'))
-```
-
-Then, add the following to line 191 of `bgapi.py` and save:
-```
-time.sleep(.25)
-```
-
-This should fix it!
-
-__*__ The way to open a terminal depends on your OS. On Windows, press <kbd>Windows</kbd> + <kbd>R</kbd>, type `cmd`, and then press <kbd>Enter</kbd>. On macOS, press <kbd>Apple</kbd>+<kbd>spacebar</kbd>, type `terminal`, and press <kbd>Enter</kbd>. On Ubuntu, <kbd>Ctrl</kbd>+<kbd>alt</kbd>+<kbd>T</kbd> will open a terminal.
-
 ### A.2. Download the code for the workshop
 
 The code for the workshop consists of Python scripts that you can find [here](https://github.com/jdpigeon/bci-workshop).
