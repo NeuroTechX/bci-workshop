@@ -1,8 +1,11 @@
-# BCI workshop at District 3
+# BCI workshop based on MuLES
 
 This document provides instructions and explanations for completing the BCI workshop given by BCI Montréal in May 2015. Specifically, it will guide you through the installation of the necessary software, the configuration of the device we will use, and the two exercises that are at the core of this workshop.
 
 This workshop is intended for people with no or limited experience with Brain-Computer Interfaces (BCIs). The workshop will teach them the basic principles that are necessary to "hack" and develop new applications with BCIs: background on brain activity and brain activity measurement with EEG, structure of a BCI, feature extraction and machine learning. Two hands-on exercises will allow the participants to 1) visualize their EEG signals and some relevant features, and 2) experiment with a very simple BCI design. This should give the participants sufficient knowledge to understand the advantages and limitations of current BCIs, and to devise their own applications.
+
+The BCI workshop was originally written for the use of the [Muse EEG headband](http://www.choosemuse.com/). However, the provided scripts will perfectly work for other EEG headsets supported by **MuLES** for example: [EMOTIV EPOC+](https://www.emotiv.com/product/emotiv-epoc-14-channel-mobile-eeg/), [Neurosky MindWave](http://support.neurosky.com/kb/science/what-are-the-differences-between-the-mindset-mindwave-mindwave-mobile-and-mindband), [Neuroelectrics ENOBIO](http://www.neuroelectrics.com/products/enobio/) and [OpenBCI V3](http://docs.openbci.com/Hardware/02-Cyton). Please check the [MuLES documentation](https://github.com/MuSAELab/MuLES/blob/master/MuLES_documentation.pdf) for information on setting up your EEG device with MuLES.
+
 
 ## Programming languages for the workshop exercises
 The material for this workshop is provided in two flavors: **Python scripts** and **MATLAB / Octave scripts**.  
@@ -12,37 +15,22 @@ The material for this workshop is provided in two flavors: **Python scripts** an
 
 Use the one that is more convenient for you.
 
-__*__ In this workshop, the Python scripts are compatible with Python 2 and Python 3.
-
-## Additional software for the workshop
-
-Additional software is required the workshop, specifically, the following tools:
-
-* **Muse SDK**: the software development kit provided to play around with the **Muse*** EEG headband.
-* **MuLES**: an EEG server that allows device-agnostic applications. __**__
-
-__*__ The Muse model utilized for this workshop is the 2014. Unfortunately the newer version (**Muse 2016**) is not supported for the moment in **MuLES**. If your device has 2 micro-USB ports, it's the 2014 model.
-
-__**__ The scripts for the workshop will perfectly work for other EEG headsets supported by **MuLES** for example: [EMOTIV EPOC+](https://www.emotiv.com/product/emotiv-epoc-14-channel-mobile-eeg/), [Neurosky MindWave](http://support.neurosky.com/kb/science/what-are-the-differences-between-the-mindset-mindwave-mindwave-mobile-and-mindband), [Neuroelectrics ENOBIO](http://www.neuroelectrics.com/products/enobio/) and [OpenBCI V3](http://docs.openbci.com/Hardware/02-Cyton). See [MuLES documentation](https://github.com/MuSAELab/MuLES/blob/master/MuLES_documentation.pdf) for further information.
+__*__ In this workshop, the Python scripts are compatible with Python 3 and Python 2.
 
 ## A Installation of software for the workshop
+There are many other programming languages ( C, C++, Java, Processing, etc.); a diversity of **Tools to make a BCI** ([OpenVIBE](http://openvibe.inria.fr/), [BCI2000](http://www.bci2000.org/wiki/index.php/Main_Page), [BCILAB](http://sccn.ucsd.edu/wiki/BCILAB), [LSL](https://github.com/sccn/labstreaminglayer) etc.); and even **EEG devices** (Muse, OpenBCI, Emotiv EPOC, Neurosky Mindwave, etc.).
 
-There are many other programming languages ( C, C++, Java, Processing, etc.); a diversity of **BCI toolboxes** ([OpenVIBE](http://openvibe.inria.fr/), [BCI2000](http://www.bci2000.org/wiki/index.php/Main_Page), [BCILAB](http://sccn.ucsd.edu/wiki/BCILAB), etc.); and even **other EEG devices** (OpenBCI, Emotiv EPOC, Neurosky Mindwave, etc.).
-
-Among those, we chose the **Python( or MATLAB/Octave)-Muse-MuLES** combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Because of this choice, we are stuck with Windows OS; however, the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
+Among those, we chose the **Python( or MATLAB/Octave)-MuLES** combination as it provides a lot of flexibility to hackers, but at the same time is simple enough that novice users can understand what they are doing. Because of this choice, we are stuck with Windows OS; however, the goal of this workshop is to teach you about BCIs in general, so that you are able to apply this knowledge to the environment and tools of your choice. We won't focus much on tools here.
 
 These are the steps to setup your computer
 
 **A.1.** Installing Python and required packages  
-**A.2.** Installing Muse SDK  
+**A.2.** Installing Muse SDK and pairing the Muse EEG headband  
 **A.3.** Installing MuLES (MuSAE Lab EEG Server)  
-**A.4.** Pairing the Muse EEG headset and configuring MuLES  
+**A.4.** Configuring MuLES  
 **A.5.** Download the code for the workshop
 
-If you will use Octave, download the newest **w64** installer (`octave-4.2.1-w64-installer.exe` in March 2017) from [https://ftp.gnu.org/gnu/octave/windows/](https://ftp.gnu.org/gnu/octave/windows/), and execute. Then proceed to step **A.2**
-
-If you will use MATLAB, and it's already installed proceed to step **A.2**
-
+If you will use Octave, download the newest **w64** installer from [https://ftp.gnu.org/gnu/octave/windows/](https://ftp.gnu.org/gnu/octave/windows/), and execute. Then proceed to step **A.2**. If you will use MATLAB, and it's already installed proceed to step **A.2**
 
 ### A.1 Installing Python required packages
 Python is a high-level scripting language that has been widely adopted in a plethora of applications. It is open, free, simple to read, and has an extensive standard library. Many packages can also be downloaded online to complement its features.
@@ -54,7 +42,7 @@ Other packages we will use in this workshop are:
 * [scikit-learn](http://scikit-learn.org/stable/): a machine learning library.
 * [pyZMQ](https://zeromq.github.io/pyzmq/): the Python binding for ZMQ, a simple communication library.
 
-To install Python 2 or Python 3, and the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 2.7 (in case of Anaconda 2) or Python 3.5 (in case of Anaconda 3), all the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python.
+To install Python 2 or Python 3, and the required packages, we suggest you download and install the [Anaconda distribution](http://continuum.io/downloads). Anaconda is a Python distribution that includes Python 2.7 (in case of Anaconda 2) or Python 3.5 (in case of Anaconda 3), all the packages we will need for the workshop (as well as plenty other useful packages), and [Spyder](https://pythonhosted.org/spyder/), a great IDE for scientific computing in Python. Once you have installed Spyder, open it, go to the Menu ``Tools \ Preferences \ IPython console \ Grahics`` and change the ``Graphic backend`` to ``Automatic``, and restart the Python kernel (or simply restart Spyder). With this configuration a new window is created for each plot, this is needed for exercises in this workshop.  
 
 #### (1) Installation of Python with Anaconda (recommended)
 
@@ -67,9 +55,20 @@ This installs Python, Spyder and all the packages we will need for the workshop 
 Alternatively, you can [download Python 2.7 independently](http://docs.python-guide.org/en/latest/starting/install/win/). Make sure to install ```pip``` (as explained [here]((http://docs.python-guide.org/en/latest/starting/install/win/))) and grab **NumPy**, **matplotlib** and **scikit-learn** by calling ```pip install <package_name>``` on the command line (or any other way you prefer). Make sure you have a text editor or IDE you can work with as well.
 
 ### A.2. Muse SDK
-This workshop is based on the [Muse](http://www.choosemuse.com/) EEG headband. The Muse provides 4 EEG dry sensors, 2 located on the forehead and 2 behind the ears. It communicates via Bluetooth to a computer or a mobile device. An [SDK](http://developer.choosemuse.com/) is available to allow basic control over the Muse's acquisition and record capabilities.
+Proceed to step **A.3**, if you are using an EEG device different from the [Muse EEG headband](http://www.choosemuse.com/) 2014 __*__.  
 
-To install the SDK, download and execute the [Muse SDK Tools 3.4.1 installer for Windows](http://developer.choosemuse.com/).
+__*__ The Muse model utilized for this workshop is the 2014. Unfortunately the newer version (**Muse 2016**) is not supported for the moment in **MuLES**. If your device has 2 micro-USB ports, it's the 2014 model.
+
+The Muse provides 4 EEG dry sensors, 2 located on the forehead and 2 behind the ears. It communicates via Bluetooth to a computer or a mobile device. An [SDK](http://developer.choosemuse.com/) is available to allow basic control over the Muse's acquisition and record capabilities. To install the SDK, download and execute the [Muse SDK Tools 3.4.1 installer for Windows](http://developer.choosemuse.com/).
+
+The **Muse** communicates to external devices using the Bluetooth protocol, and thus needs to be paired with your computer. To pair the **Muse** with your computer, follow these steps:
+
+1. Switch on the **Muse** into Pairing Mode by holding the button down for ~5 seconds. The light should start flashing.
+2. Under *Control Panel/Hardware and Sound*, click on *Add a device*.
+3. A Bluetooth device named *Muse<-something>* should appear. Select the Muse device and click *Next*.
+4. Click *Next* when asking for a passcode.
+5. Turn off the Muse by holding the button down for ~2 seconds.
+
 
 ### A.3. MuLES (MuSAE Lab EEG Server)
 
@@ -83,48 +82,38 @@ MuLES is developed in LabVIEW, and is currently only available for Windows. Futu
 
 To install MuLES, download the [MuLES installer v1.3](https://github.com/MuSAELab/MuLES/releases) and follow the instructions given on the web page.
 
-### A.4. Pairing the Muse EEG headset and configuring MuLES
-The **Muse** communicates to external devices using the Bluetooth protocol, and thus needs to be paired with your computer. To pair the **Muse** with your computer, follow these steps:
+### A.4. Configuring MuLES
+Modifications on the MuLES configuration file ``config.ini`` are required to add your EEG devices to MuLES. This file is located in the MuLES installation directory (by default ``C:\Program Files (x86)\MuSAE_Lab\MuLES``). For detailed information on setting up your EEG device with MuLES, refer to the [MuLES documentation](https://github.com/MuSAELab/MuLES/blob/master/MuLES_documentation.pdf).
 
-1. Switch on the **Muse** into Pairing Mode by holding the button down for ~5 seconds. The light should start flashing.
-2. Under *Control Panel/Hardware and Sound*, click on *Add a device*.
-3. A Bluetooth device named *Muse<-something>* should appear. Select the Muse device and click *Next*.
-4. Click *Next* when asking for a passcode.
-5. Turn off the Muse by holding the button down for ~2 seconds.
+#### Muse
+Look for the Muse EEG headband ``[DEVICExx]`` entry and change the value of the ``BTNAME`` parameter to the name of your Muse. For example, if your Muse's Bluetooth name is ``Muse-6AB1`` , you would have the line ``EXTRA = "FS=220,#CH=4,DATA=ffffi,PRESET=14,BTNAME=Muse-6AB1,OSCPORT=5000"``.
 
-Now that your computer is set up to recognize the Muse, we will configure MuLES so it knows which device it should be looking for.
-
-1. Go to the MuLES installation directory (by default ```C:\Program Files (x86)\MuSAE_Lab\MuLES```).
-2. Open ```config.ini``` in a text editor.
-3. Under the section [DEVICE03], locate the ```EXTRA``` keyword.
-4. Change the value of the ```BTNAME``` parameter to the name of your Muse. For example, if your Muse's Bluetooth name is ```Muse-6AB1```, you would have the line ```EXTRA = "FS=220,#CH=4,DATA=ffffi,PRESET=14,BTNAME=Muse-6AB1,OSCPORT=5000"```.
-5. If you are working in a 32-bit version of Windows, you will need to change the value of the ```PATH``` keyword to indicate the correct path to ```muse-io.exe``` (should be similar to ```"/C/Program Files (x86)/Muse/muse-io.exe"```).
-6. Save and close the file.
+#### OpenBCI Cyton, Neurosky and MindWave devices
+Look for their respective ``[DEVICExx]`` entry, and change the ``COM`` parameter to the number of port that is being used by that device.
 
 
 ### A.5. Download the code for the workshop
+The code for the workshop consists of Python (and MATLAB / Octave) scripts that you can find [here](https://github.com/NeuroTechX/bci-workshop/tree/mules-version).
+You can download everything as a ```.zip``` file using the ``Clone or download`` button on the right. You then need to unzip the folder on your computer.
 
-The code for the workshop consists of Python (and MATLAB / Octave) scripts that you can find [here](https://github.com/NeuroTechX/bci-workshop).
-You can download everything as a ```.zip``` file using the button ![downloadzip](fig/download_zip.jpg?raw=true "Download zip button") on the right. You then need to unzip the folder on your computer.
-
-Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in the command line.
+Alternatively, if you have ```git``` installed on your computer, you can clone the repository by calling ```git clone https://github.com/NeuroTechX/bci-workshop.git``` in the command line. Note that this workshop is located in the ``mules-version`` branch of the repository.
 
 Exercise 02 uses the Support Vector Machine (SVM) algorithm to perform classification. Pre-build binaries of the [LIBSVM](http://www.csie.ntu.edu.tw/~cjlin/libsvm/) are provided for 64-bit versions of MATLAB and Octave.
 
 
 ## Exercise 1: A simple neurofeedback interface
 
-In this first exercise, we will learn how to visualize the raw EEG signals that come from the Muse inside a Python application. We will also extract and visualize basic features of the raw EEG signals. This will showcase a first basic use of a Brain-Computer Interface: a so-called neurofeedback interface.
+In this first exercise, we will learn how to visualize the raw EEG signals that come from the EEG device inside an application. We will also extract and visualize basic features of the raw EEG signals. This will showcase a first basic use of a Brain-Computer Interface: a so-called neurofeedback interface.
 
 > Neurofeedback (also called neurotherapy or neurobiofeedback) uses real-time representation of brain-activity (as sound and visual effects) to teach users to control their brain activity.
 
-### E1.1 Streaming data from the Muse
+### E1.1 Streaming data from the EEG device
 
 1. Open MuLES (a shortcut should have been automatically added to your desktop, otherwise you can run it from the installation directory ```C:\Program Files (x86)\MuSAE_Lab\MuLES```).
-2. In the dropdown menu, choose ```MUSE Consumer FW```.
+2. In the dropdown menu, choose your device, that was configure in the step **A.4**.
 3. Make sure the *Enable TCP Server* button is highlighted in green. You can also save the EEG data in a file by enabling the *Enable Logging* button.
-4. Switch on the Muse by holding the button down for ~1 second. The light should start oscillating.
-5. Start streaming data from the Muse by clicking on the green *Play* button. A command line window should appear giving details on the Muse communication status.
+4. Turn on your EEG device.
+5. Start streaming data from the EEG device by clicking on the green *Play* button.
 
 ![playbutton](fig/mules.png?raw=true "MuLES GUI")
 
@@ -132,7 +121,7 @@ In this first exercise, we will learn how to visualize the raw EEG signals that 
 1. Open the script ```exercise_01.py``` in **Spyder** or ```exercise_01.m``` in **MATLAB** or **Octave**.
 2. Read the code - it is thoroughly commented - and modify the experiment parameters as you wish in the **Set the experiment parameters section**.
 3. Run the script. In **Spyder**, select a Python console on the bottom right of the screen, then click on the *Run File* button on top of the editor.
-4. Two figures should appear: One displaying the raw signals of the Muse's 4 EEG sensors, and another one showing the basic band power features we are computing on one of the EEG signals.
+4. Two figures should appear: One displaying the raw signal of the first channel in the EEG devices and the Status (Marker), and another one showing the basic band power features we are computing on that EEG signal.
 5. To stop the execution of the script, in **Python** press `Ctrl+C` in the Python console. In **MATLAB** and **Octave** close any of the figure windows. Don't forget MuLES is still running as well!
 
 ![ex1_figures](fig/ex1_figures.png?raw=true "Visualization in E1.2")
@@ -151,7 +140,7 @@ Run the script and look at the first figure (raw EEG visualization). What makes 
 In the first case, you can see that the first movements (blinking, etc.) strongly disturb the EEG signal. We call these **artifacts**. Some artifacts are so huge that they can completely obscure the actual EEG signal coming from your brain. We typically divide artifacts according to their source: *physiological artifacts* (caused by the electrical activity of the heart, muscles, movement of the eyes, etc.), and *motion artifacts* (caused by a relative displacement of the sensor and the skin).
 
 In the second case, you can see that different mental activities (e.g. imagining eating or talking) are not easily recognizable in the EEG signals.
-First, this is because mental activity is distributed across the brain: for example, sensorimotor processing occurs on top of the brain, in the central cortex, while speech-related functions occurs at the sides of the brain, in the temporal cortex. Therefore, the 4 sensors on the Muse are not necessarily on the right "spot" to capture those EEG signals.
+First, this is because mental activity is distributed across the brain: for example, sensorimotor processing occurs on top of the brain, in the central cortex, while speech-related functions occurs at the sides of the brain, in the temporal cortex.
 Second, the EEG signals are very, very, very noisy. Indeed, the electrical signals that we pick up on the scalp are smeared by the skull, muscles and skin. As you saw, eye balling the signals is often not enough to analyze brain activity. (That is why we need to extract descriptive characteristics from the signals: what we call features!)
 
 #### Visualizing your EEG features
@@ -181,17 +170,21 @@ These are the features that you visualized in E1.2 in Figure 2.
 
 We expect each band to reflect specific mental activities. For example, we know that closing the eyes and relaxing provokes an increase in Alpha band activity and a decrease in Beta band activity, especially at the back of the head. We will try to reproduce this result now.
 
-1. Open the script ```exercise_01_one_channel.py``` or ```exercise_01_one_channel.m```.
-2. Change the value of the ```eeg_buffer_secs``` parameter to around 40.
+1. Open the script ```exercise_01.py``` or ```exercise_01.m```.
+2. Change the value of the ```eeg_buffer_secs``` parameter to around 40 seconds.
 3. Run the script and look at the second figure.
 4. Keep your eyes open for 20 seconds (again, try to minimize your movements).
 5. Close your eyes and relax for another 20 seconds (minimize your movements).
 
 Do you see a difference between the first and the last 20-s windows for the Alpha and Beta features?
 
+#### Plotting multiple channels
+If you want to see the EEG signals for all the avialable channels run the script ```exercise_01_multichannel.py``` or ```exercise_01_multichannel.m```.
+
+
 #### Advanced: computing supplementary features
 
-Many other features can be used to describe the EEG activity: band powers, Auto-Regressive model coefficients, Wavelet coefficients, coherence, mutual information, etc. As a starting point, adapt the code in the ```compute_feature_vector()``` function to compute additional, finer bands, i.e. low Alpha, medium Alpha, high Alpha, low Beta, and high Beta:
+Many other features can be used to describe the EEG activity: band powers, auto-regressive model coefficients, wavelet coefficients, coherence, mutual information, etc. As a starting point, adapt the code in the ```compute_feature_vector()``` function to compute additional, finer bands, i.e. low Alpha, medium Alpha, high Alpha, low Beta, and high Beta:
 
 - Low Alpha (8-10 Hz)
 - Medium Alpha (9-11 Hz)
@@ -205,8 +198,11 @@ Repeat the above eyes open/closed procedure with your new features. Can you see 
 
 Other points you can consider to design better features:
 
-* Extract the features for each of the Muse's 4 sensors. Each sensor measures a different part of the brain, and so features from different sensors can again provide more specific information.
+* Extract the features for each of the EEG channels. As each channel measures a different part of the brain, and so features from different sensors can again provide more specific information.
 * Similarly, ratios of features between different sensors (e.g. Alpha in frontal region/Beta in temporal region) can provide additional useful information.
+
+
+
 
 ## Exercise 2: A basic BCI
 
@@ -264,7 +260,7 @@ For example, you could send the classifier's decisions to a Processing script to
 
 In this workshop, we saw **1)** how to run a simple neurofeedback interface, and **2)** use a basic brain-computer interface. To do so, we covered the basic principles behind the use of electroencephalography signals in modern BCI applications: properties of the raw EEG time series, extraction of band power features, physiological and motion artifacts, and machine learning-based classification of mental activities.
 
-We used the following tools in this workshop: the **MuLES EEG server**, the **Python**, **MATLAB** and **Octave** scripting languages, and the **Muse EEG headset**. All the necessary scripts for this workshop are available [online](https://github.com/NeuroTechX/bci-workshop) and their re-use is strongly encouraged.
+We used the following tools in this workshop: the **MuLES EEG server**, and **Python** (or **MATLAB** or **Octave**) scripting language. All the necessary scripts for this workshop are available [online](https://github.com/NeuroTechX/bci-workshop/tree/mules-version) and their re-use is strongly encouraged.
 
 Now is **your turn** to come up with inventive ways of using neurophysiological data! You can follow the pointers in the *References* section for inspiration.
 
