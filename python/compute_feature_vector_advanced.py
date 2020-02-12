@@ -23,8 +23,8 @@ def compute_feature_vector(eegdata, Fs):
 
     NFFT = nextpow2(winSampleLength)
     Y = np.fft.fft(dataWinCenteredHam, n=NFFT, axis=0)/winSampleLength
-    PSD = 2*np.abs(Y[0:NFFT/2,:])
-    f = Fs/2*np.linspace(0,1,NFFT/2)     
+    PSD = 2*np.abs(Y[0:NFFT//2,:])
+    f = Fs/2*np.linspace(0,1,NFFT//2)     
             
     # SPECTRAL FEATURES
     # Average of band powers

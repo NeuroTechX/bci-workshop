@@ -109,8 +109,8 @@ def compute_feature_vector(eegdata, Fs):
 
     NFFT = nextpow2(winSampleLength)
     Y = np.fft.fft(dataWinCenteredHam, n=NFFT, axis=0)/winSampleLength
-    PSD = 2*np.abs(Y[0:NFFT/2,:])
-    f = Fs/2*np.linspace(0,1,NFFT/2)     
+    PSD = 2*np.abs(Y[0:NFFT // 2,:])
+    f = Fs/2*np.linspace(0,1,NFFT//2)     
             
     # SPECTRAL FEATURES
     # Average of band powers
@@ -261,7 +261,7 @@ def getlastdata(data_buffer, newest_samples):
     """
     Obtains from "buffer_array" the "newest samples" (N rows from the bottom of the buffer)
     """
-    new_buffer = data_buffer[(data_buffer.shape[0] - newest_samples)::,::]  
+    new_buffer = data_buffer[(data_buffer.shape[0] - int(newest_samples))::,::]  
 
     return new_buffer  
     
