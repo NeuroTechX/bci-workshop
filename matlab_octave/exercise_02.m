@@ -33,8 +33,8 @@ sampling_frequency = params{3};
 %% Set the experiment parameters
 
 training_secs = 20;
-win_test_secs = 1;     % Length of the Test Window in seconds
-overlap_secs = 0.7;    % Overlap between two consecutive Test Windows
+win_test_secs = 2.0;     % Length of the Test Window in seconds
+overlap_secs =  1.0;    % Overlap between two consecutive Test Windows
 shift_secs = win_test_secs - overlap_secs;   
 eeg_buffer_secs = 30;  % Size of the EEG data buffer (duration of Testing section) 
 

@@ -26,11 +26,11 @@ params = mules_client.getparams();
     
 eeg_buffer_secs = 15;  % Size of the EEG data buffer used for plotting the 
                        % signal (in seconds) 
-win_test_secs = 1;     % Length of the window used for computing the features 
+win_test_secs = 2.0;     % Length of the window used for computing the features 
                        % (in seconds)
-overlap_secs = 0.5;    % Overlap between two consecutive windows (in seconds)
+overlap_secs = 1.0;    % Overlap between two consecutive windows (in seconds)
 shift_secs = win_test_secs - overlap_secs;
-index_channel = 1;     % Index of the channnel to be used (with the Muse, we 
+index_channel = 2;     % Index of the channnel to be used (with the Muse, we 
                        % can choose from 0 to 3)
 
 
