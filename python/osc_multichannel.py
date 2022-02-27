@@ -192,7 +192,7 @@ if __name__ == "__main__":
             """ Compute relax and focus metrics """
             # Split feature vector to the four respective bands
             # each band list has the band powers per channel
-            band_vectors = [feat_vector[i::n_channels]
+            band_vectors = [feat_vector[i::n_channels][1:-1]
                             for i in range(n_channels)]
 
             # Calculate Focus and Relax Ratios per channel
