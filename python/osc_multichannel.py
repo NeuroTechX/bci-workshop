@@ -210,38 +210,32 @@ if __name__ == "__main__":
                 band_vectors[Band.Theta][Channel.TP9], band_vectors[Band.Alpha][Channel.AF7])
             relax_right = np.divide(
                 band_vectors[Band.Theta][Channel.TP10], band_vectors[Band.Alpha][Channel.AF8])
-            relax_avg = relax_left
 
             focus_left = np.divide(
                 band_vectors[Band.Beta][Channel.AF7], band_vectors[Band.Delta][Channel.TP9])
             focus_right = np.divide(
                 band_vectors[Band.Beta][Channel.AF8], band_vectors[Band.Delta][Channel.TP10])
-            focus_avg = focus_left
 
             # normalize averages
-            relax_avg = tanh_normalize(relax_avg, relax_scale, offset)
             relax_left = tanh_normalize(relax_left, relax_scale, offset)
             relax_right = tanh_normalize(relax_right, relax_scale, offset)
 
-            focus_avg = tanh_normalize(focus_avg, focus_scale, offset)
             focus_left = tanh_normalize(focus_left, focus_scale, offset)
             focus_right = tanh_normalize(focus_right, focus_scale, offset)
 
             # average values
-            relax_avg = np.average(relax_avg)
             relax_left = np.average(relax_left)
             relax_right = np.average(relax_right)
 
-            focus_avg = np.average(focus_avg)
             focus_left = np.average(focus_left)
             focus_right = np.average(focus_right)
 
             """ Send results to OSC messenger loop """
-            osc_thread.set_message(OSC_Path.Relax, relax_avg)
+            osc_thread.set_message(OSC_Path.Relax, relax_left)
             osc_thread.set_message(OSC_Path.RelaxLeft, relax_left)
             osc_thread.set_message(OSC_Path.RelaxRight, relax_right)
 
-            osc_thread.set_message(OSC_Path.Focus, focus_avg)
+            osc_thread.set_message(OSC_Path.Focus, focus_left)
             osc_thread.set_message(OSC_Path.FocusLeft, focus_left)
             osc_thread.set_message(OSC_Path.FocusRight, focus_right)
 
