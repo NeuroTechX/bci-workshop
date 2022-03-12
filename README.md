@@ -16,12 +16,16 @@ This is my fork of the workshop code that sends relaxation and focus metrics to 
 
 Avatar parameters being sent are floats that range from -1.0 to 1.0. Negative and Positive values correspond to low and high focus/relaxation. Left and right sides of the brain are measured and can be recieved by VRC seperately. Update your avatar paramaters as needed to influnece animations and the like. Have fun!
 
-- `/avatar/parameters/osc_relax_avg`
+
 - `/avatar/parameters/osc_relax_left`
 - `/avatar/parameters/osc_relax_right`
-- `/avatar/parameters/osc_focus_avg`
 - `/avatar/parameters/osc_focus_left`
 - `/avatar/parameters/osc_focus_right`
+
+These paramaters have been deprecated. They will always report the left channels since taking the average of each side of the brain averages the noise as well:
+
+- `/avatar/parameters/osc_relax_avg`
+- `/avatar/parameters/osc_focus_avg`
 
 ## License
 [MIT](http://opensource.org/licenses/MIT).
