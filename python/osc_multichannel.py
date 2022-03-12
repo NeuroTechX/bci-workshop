@@ -30,6 +30,13 @@ class Band:
     Beta = 3
 
 
+class Channel:
+    TP9 = 0
+    AF7 = 1
+    AF8 = 2
+    TP10 = 3
+
+
 class OSC_Path:
     Relax = '/avatar/parameters/osc_relax_avg'
     RelaxLeft = '/avatar/parameters/osc_relax_left'
@@ -49,8 +56,9 @@ focus_weight = 0.01
 # normalize ratios between -1 and 1.
 # Ratios are centered around 1.0. Tune scale to taste
 offset = -1
-relax_scale = 5
-focus_scale = 2
+
+relax_scale = 1.3
+focus_scale = 1.3
 
 """ Show EEG and Band Plots """
 ENABLE_PLOTTER = False
@@ -77,7 +85,7 @@ if __name__ == "__main__":
     # OSC messenger thread
     ip = "127.0.0.1"
     port = 9000
-    send_rate = 0.001
+    send_rate = 0.016
     osc_thread = osc_messenger_thread(rolling_Avg_Weights, send_rate, ip, port)
 
     """ 1. CONNECT TO EEG STREAM """
@@ -190,38 +198,43 @@ if __name__ == "__main__":
                                                 np.asarray([feat_vector]))
 
             """ Compute relax and focus metrics """
+
             # Split feature vector to the four respective bands
             # each band list has the band powers per channel
-            band_vectors = [feat_vector[i::n_channels][1:-1]
+            band_vectors = [feat_vector[i::n_channels]
                             for i in range(n_channels)]
 
-            # Calculate Focus and Relax Ratios per channel
-            relax_ratios = np.divide(
-                band_vectors[Band.Theta], band_vectors[Band.Alpha])
-            focus_ratios = np.divide(
-                band_vectors[Band.Beta], band_vectors[Band.Theta])
+            # Get specific brainwaves from different parts of the head
+            # based on some assumptions about the human brain
+            relax_left = np.divide(
+                band_vectors[Band.Theta][Channel.TP9], band_vectors[Band.Alpha][Channel.AF7])
+            relax_right = np.divide(
+                band_vectors[Band.Theta][Channel.TP10], band_vectors[Band.Alpha][Channel.AF8])
+            relax_avg = relax_left
 
-            relax_normals = tanh_normalize(relax_ratios, relax_scale, offset)
-            focus_normals = tanh_normalize(focus_ratios, focus_scale, offset)
+            focus_left = np.divide(
+                band_vectors[Band.Beta][Channel.AF7], band_vectors[Band.Delta][Channel.TP9])
+            focus_right = np.divide(
+                band_vectors[Band.Beta][Channel.AF8], band_vectors[Band.Delta][Channel.TP10])
+            focus_avg = focus_left
 
-            # band values are sorted from left to right channels.
-            # Split arrays in half for left and right brain specific bands
-            half_band_length = int(len(relax_normals) * 0.5)
+            # normalize averages
+            relax_avg = tanh_normalize(relax_avg, relax_scale, offset)
+            relax_left = tanh_normalize(relax_left, relax_scale, offset)
+            relax_right = tanh_normalize(relax_right, relax_scale, offset)
 
-            left_relax_normals = relax_normals[:half_band_length]
-            right_relax_normals = relax_normals[half_band_length:]
+            focus_avg = tanh_normalize(focus_avg, focus_scale, offset)
+            focus_left = tanh_normalize(focus_left, focus_scale, offset)
+            focus_right = tanh_normalize(focus_right, focus_scale, offset)
 
-            left_focus_normals = focus_normals[:half_band_length]
-            right_focus_normals = focus_normals[half_band_length:]
+            # average values
+            relax_avg = np.average(relax_avg)
+            relax_left = np.average(relax_left)
+            relax_right = np.average(relax_right)
 
-            # average normalized values
-            relax_avg = np.average(relax_normals, axis=0)
-            relax_left = np.average(left_relax_normals, axis=0)
-            relax_right = np.average(right_relax_normals, axis=0)
-
-            focus_avg = np.average(focus_normals, axis=0)
-            focus_left = np.average(left_focus_normals, axis=0)
-            focus_right = np.average(right_focus_normals, axis=0)
+            focus_avg = np.average(focus_avg)
+            focus_left = np.average(focus_left)
+            focus_right = np.average(focus_right)
 
             """ Send results to OSC messenger loop """
             osc_thread.set_message(OSC_Path.Relax, relax_avg)
