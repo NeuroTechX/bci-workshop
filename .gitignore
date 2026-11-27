@@ -1,14 +1,19 @@
-# Mac
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
 .DS_Store
-
-# Matlab
-*.asv
-
-# Python
-*.pyc
-
-# Markdown
-*.md~
-
-# Others
-.Rhistory
+beep.wav
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.xdv

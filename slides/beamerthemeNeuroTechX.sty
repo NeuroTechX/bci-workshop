@@ -1,0 +1,350 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeNeuroTechX}[2026/11/26 NeuroTechX 2026-27 presentation theme]
+
+\RequirePackage{graphicx}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{tikz}
+\RequirePackage{iftex}
+\RequirePackage{etoolbox}
+
+% Theme options:
+%   \usetheme{NeuroTechX}             -> 2026-27 warm editorial theme (default)
+%   \usetheme[sand]{NeuroTechX}       -> warm stone default canvas (#EDE9E0)
+%   \usetheme[dark]{NeuroTechX}       -> dark slate default canvas (#1D2229)
+%   \usetheme[legacyblack]{NeuroTechX}-> Sept 2026 black/white theme for archival rebuilds
+\newif\ifntx@darkmode
+\ntx@darkmodefalse
+\newif\ifntx@legacyblack
+\ntx@legacyblackfalse
+\newif\ifntx@sanddefault
+\ntx@sanddefaultfalse
+
+\DeclareOption{light}{\ntx@darkmodefalse\ntx@legacyblackfalse}
+\DeclareOption{sand}{\ntx@sanddefaulttrue\ntx@darkmodefalse\ntx@legacyblackfalse}
+\DeclareOption{dark}{\ntx@darkmodetrue\ntx@legacyblackfalse}
+\DeclareOption{legacyblack}{\ntx@darkmodetrue\ntx@legacyblacktrue}
+\ProcessOptions\relax
+
+% Typography: EB Garamond (display serif) + Public Sans (UI/body sans),
+% with automatic portable fallbacks (Palatino + TeX Gyre Heros / Latin Modern).
+\ifPDFTeX
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage{lmodern}
+  \newcommand{\NTXSerif}{\rmfamily}
+  \newcommand{\NTXSans}{\sffamily}
+  \newcommand{\NTXTrack}[1]{\MakeUppercase{#1}}
+\else
+  \RequirePackage{fontspec}
+  \IfFontExistsTF{EB Garamond}{%
+    \setmainfont{EB Garamond}%
+  }{%
+    \IfFontExistsTF{Palatino}{%
+      \setmainfont{Palatino}%
+    }{%
+      \setmainfont{Latin Modern Roman}%
+    }%
+  }
+  \IfFontExistsTF{Public Sans}{%
+    \setsansfont{Public Sans}%
+  }{%
+    \setsansfont{texgyreheros-regular.otf}[
+      BoldFont=texgyreheros-bold.otf,
+      ItalicFont=texgyreheros-italic.otf,
+      BoldItalicFont=texgyreheros-bolditalic.otf]%
+  }
+  \IfFontExistsTF{Menlo}{%
+    \setmonofont[Scale=0.86]{Menlo}%
+  }{}
+  \newcommand{\NTXSerif}{\rmfamily}
+  \newcommand{\NTXSans}{\sffamily}
+  \newcommand{\NTXTrack}[1]{{\addfontfeature{LetterSpace=14.0}\MakeUppercase{#1}}}
+\fi
+
+% Exact 2026-27 NeuroTechX palette (matched to the 2026-27 Intro to NeuroTechX deck)
+\definecolor{NTXPaperBase}{HTML}{F7F5F0}
+\definecolor{NTXSand}{HTML}{EDE9E0}
+\definecolor{NTXTableHead}{HTML}{F1EEE7}
+\definecolor{NTXSlate}{HTML}{1D2229}
+\definecolor{NTXInkBase}{HTML}{1D2229}
+\definecolor{NTXMutedBase}{HTML}{535C67}
+\definecolor{NTXMutedOnDark}{HTML}{BCC3CB}
+\definecolor{NTXRule}{HTML}{CFC8BA}
+\definecolor{NTXDarkRule}{HTML}{454E59}
+\definecolor{NTXWatermark}{HTML}{DDD8CC}
+\definecolor{NTXTealBase}{HTML}{0B6B70}
+\definecolor{NTXTealOnDark}{HTML}{4CC3C9}
+
+\ifntx@legacyblack
+  \definecolor{NTXPaper}{HTML}{000000}
+  \definecolor{NTXInk}{HTML}{FFFFFF}
+  \definecolor{NTXMuted}{HTML}{B8B8B8}
+  \definecolor{NTXTeal}{HTML}{B8B8B8}
+  \colorlet{NTXRuleActive}{NTXMuted}
+\else
+  \ifntx@darkmode
+    \colorlet{NTXPaper}{NTXSlate}
+    \colorlet{NTXInk}{NTXPaperBase}
+    \colorlet{NTXMuted}{NTXMutedOnDark}
+    \colorlet{NTXTeal}{NTXTealOnDark}
+    \colorlet{NTXRuleActive}{NTXDarkRule}
+  \else
+    \ifntx@sanddefault
+      \colorlet{NTXPaper}{NTXSand}
+    \else
+      \colorlet{NTXPaper}{NTXPaperBase}
+    \fi
+    \colorlet{NTXInk}{NTXInkBase}
+    \colorlet{NTXMuted}{NTXMutedBase}
+    \colorlet{NTXTeal}{NTXTealBase}
+    \colorlet{NTXRuleActive}{NTXRule}
+  \fi
+\fi
+
+% Compatibility aliases for existing NeuroTechX presentations
+\colorlet{NTXWhite}{NTXPaper}
+\colorlet{NTXSurface}{NTXSand}
+\colorlet{NTXCyan}{NTXTeal}
+
+% Vector Hexagon-Infinity NeuroTechX mark (TikZ, resolution-independent)
+% #1 = height, #2 = hex/infinity stroke color
+\newcommand{\NTXHexIcon}[2]{%
+  \begin{tikzpicture}[baseline={(0,-0.32*#1)},x=#1,y=#1,line join=miter,line cap=butt]
+    % Outer flat-top hexagon
+    \draw[color=#2,line width=0.105*#1]
+      (0.54,0) -- (0.27,0.468) -- (-0.27,0.468) -- (-0.54,0) -- (-0.27,-0.468) -- (0.27,-0.468) -- cycle;
+    % Inner angular infinity (double-diamond)
+    \draw[color=#2,line width=0.092*#1]
+      (-0.33,0) -- (-0.165,0.285) -- (0,0) -- (0.165,0.285) -- (0.33,0)
+      -- (0.165,-0.285) -- (0,0) -- (-0.165,-0.285) -- cycle;
+  \end{tikzpicture}%
+}
+
+% Stacked NTX badge used on title & closing slides
+\newcommand{\NTXBadge}[1][13mm]{%
+  \begin{tikzpicture}[x=#1,y=#1,line join=miter]
+    \draw[color=NTXInk,line width=0.105*#1]
+      (0.54,0) -- (0.27,0.468) -- (-0.27,0.468) -- (-0.54,0) -- (-0.27,-0.468) -- (0.27,-0.468) -- cycle;
+    \draw[color=NTXInk,line width=0.092*#1]
+      (-0.33,0) -- (-0.165,0.285) -- (0,0) -- (0.165,0.285) -- (0.33,0)
+      -- (0.165,-0.285) -- (0,0) -- (-0.165,-0.285) -- cycle;
+    \node[anchor=north,inner sep=0pt,yshift=-0.10*#1] at (0,-0.468)
+      {\NTXSans\bfseries\fontsize{7.5}{8.5}\selectfont\color{NTXInk}NT{\color{NTXTeal}X}};
+  \end{tikzpicture}%
+}
+
+% Inline footer mark + wordmark
+\newcommand{\NTXFooterMark}{%
+  \NTXHexIcon{4.4mm}{NTXInk}\hspace{1.8mm}{\NTXSans\bfseries\scriptsize\color{NTXInk}NeuroTechX}%
+}
+
+% Backwards-compatible logo helpers (uses PNG in legacyblack mode if available, vector otherwise)
+\newcommand{\NTXLogo}[1][28mm]{%
+  \ifntx@legacyblack
+    \IfFileExists{assets/brand/neurotechx-logo.png}{%
+      \includegraphics[width=#1]{assets/brand/neurotechx-logo.png}%
+    }{\NTXFooterMark}%
+  \else
+    \NTXFooterMark
+  \fi
+}
+\newcommand{\NTXWordmark}{\NTXBadge[13mm]}
+
+% Beamer color & font setup
+\setbeamercolor{background canvas}{bg=NTXPaper}
+\setbeamercolor{normal text}{fg=NTXInk,bg=NTXPaper}
+\AtBeginEnvironment{beamer@frameslide}{\color{NTXInk}}
+\setbeamercolor{structure}{fg=NTXInk}
+\setbeamercolor{alerted text}{fg=NTXTeal}
+\setbeamercolor{frametitle}{fg=NTXInk,bg=}
+\setbeamercolor{block title}{fg=NTXInk,bg=}
+\setbeamercolor{block body}{fg=NTXMuted,bg=}
+\setbeamercolor{footline}{fg=NTXMuted,bg=}
+\setbeamercolor{itemize item}{fg=NTXInk}
+\setbeamercolor{itemize subitem}{fg=NTXMuted}
+\setbeamercolor{enumerate item}{fg=NTXInk}
+
+\setbeamerfont{title}{family=\rmfamily,size=\Huge,series=\mdseries}
+\setbeamerfont{frametitle}{family=\rmfamily,size=\LARGE,series=\mdseries}
+\setbeamerfont{framesubtitle}{family=\sffamily,size=\small,series=\mdseries}
+\setbeamerfont{block title}{family=\rmfamily,size=\large,series=\bfseries}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\raisebox{0.2ex}{\tiny\textbullet}}
+\setbeamertemplate{itemize subitem}{\raisebox{0.2ex}{\tiny--}}
+\setbeamertemplate{enumerate item}{\NTXSans\insertenumlabel.}
+\setbeamersize{text margin left=12mm,text margin right=12mm}
+
+% Per-frame state (eyebrow above title, bottom link helper)
+\gdef\ntx@eyebrow{}
+\newcommand{\NTXEyebrow}[1]{\gdef\ntx@eyebrow{#1}}
+\newcommand{\NTXFooterLink}[2]{%
+  \par\vfill
+  {\NTXSans\scriptsize\color{NTXTeal}%
+   \ifstrempty{#1}{#2}{\href{#1}{#2}}\par}%
+  \vspace{1mm}%
+}
+
+\setbeamertemplate{frametitle}{%
+  \vspace{4.5mm}%
+  \ifdefempty{\ntx@eyebrow}{}{%
+    {\NTXSans\bfseries\fontsize{6.8}{8.5}\selectfont\color{NTXTeal}\NTXTrack{\ntx@eyebrow}\par}%
+    \vspace{1.6mm}%
+  }%
+  {\usebeamerfont{frametitle}\color{NTXInk}\insertframetitle\par}%
+  \ifx\insertframesubtitle\@empty\else
+    \vspace{1.2mm}{\usebeamerfont{framesubtitle}\color{NTXMuted}\insertframesubtitle\par}%
+  \fi
+  \vspace{3mm}%
+  \gdef\ntx@eyebrow{}%
+}
+
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=6.8mm,dp=3.0mm,leftskip=12mm,rightskip=12mm]{footline}%
+    \ifntx@legacyblack
+      \NTXLogo[25mm]\hfill{\tiny\color{NTXMuted}\insertsectionhead}\hfill{\tiny\color{NTXMuted}\insertframenumber}%
+    \else
+      \NTXFooterMark\hfill{\NTXSans\scriptsize\color{NTXMuted}\insertframenumber}%
+    \fi
+  \end{beamercolorbox}%
+}
+
+% Title page (matched to Slide 1 of the 2026-27 NeuroTechX deck)
+\gdef\ntx@titlekicker{NEUROTECHX}
+\newcommand{\NTXTitleKicker}[1]{\gdef\ntx@titlekicker{#1}}
+
+\setbeamertemplate{title page}{%
+  \vspace*{5mm}%
+  {\NTXBadge[13.5mm]\par}%
+  \vspace{4.5mm}%
+  \ifdefempty{\ntx@titlekicker}{}{%
+    {\NTXSans\bfseries\fontsize{7}{9}\selectfont\color{NTXTeal}\NTXTrack{\ntx@titlekicker}\par}%
+    \vspace{2.5mm}%
+  }%
+  {\NTXSerif\fontsize{25}{29}\selectfont\color{NTXInk}\inserttitle\par}%
+  \ifx\insertsubtitle\@empty\else
+    \vspace{3mm}%
+    {\NTXSans\small\color{NTXMuted}\parbox{0.78\textwidth}{\raggedright\insertsubtitle}\par}%
+  \fi
+  \vfill
+  \ifx\insertauthor\@empty\else
+    {\NTXSans\footnotesize\color{NTXInk}\insertauthor\par}\vspace{1mm}%
+  \fi
+  {\NTXSans\scriptsize\color{NTXInk}\textbf{NeuroTech{\color{NTXTeal}X}}%
+    \ifx\insertinstitute\@empty\else\enspace$\cdot$\enspace{\color{NTXMuted}\insertinstitute}\fi
+    \ifx\insertdate\@empty\else\enspace$\cdot$\enspace{\color{NTXMuted}\insertdate}\fi
+  \par}%
+  \vspace{3mm}%
+}
+
+% Editorial layout macros matching the 2026-27 slide system
+% 1. Column block with crisp top rule + bold serif title + muted sans body (Slides 3, 6-8, 14, 16, 19)
+\newcommand{\NTXCol}[2]{%
+  {\color{NTXInk}\rule{\linewidth}{0.65pt}\par}\vspace{2.4mm}%
+  {\NTXSerif\bfseries\large\color{NTXInk}#1\par}\vspace{1.8mm}%
+  {\NTXSans\small\color{NTXMuted}\raggedright #2\par}%
+}
+
+% 2. Subtle hairline + tracked teal sub-label (Slides 10-13: STACK / GOOD FIRST TASKS / ALSO)
+\newcommand{\NTXSubSection}[1]{%
+  {\color{NTXRuleActive}\rule{\linewidth}{0.55pt}\par}\vspace{2.2mm}%
+  {\NTXSans\bfseries\fontsize{6.6}{8}\selectfont\color{NTXTeal}\NTXTrack{#1}\par}\vspace{2mm}%
+}
+
+% 3. Large editorial stat callout (Slides 4 & 15: 30+, 100+, 60+, 1,500+)
+\newcommand{\NTXStat}[2]{%
+  {\color{NTXRuleActive}\rule{\linewidth}{0.55pt}\par}\vspace{3.2mm}%
+  {\NTXSerif\fontsize{30}{33}\selectfont\color{NTXTeal}#1\par}\vspace{2mm}%
+  {\NTXSans\footnotesize\color{NTXMuted}\raggedright #2\par}%
+}
+
+% 4. Mission / watermark statement helper (Slide 2)
+\newcommand{\NTXStatement}[2]{%
+  \begin{columns}[c,onlytextwidth]
+    \column{0.66\textwidth}
+      {\NTXSerif\fontsize{20}{25}\selectfont\color{NTXInk}\raggedright #1\par}%
+      \vspace{5mm}%
+      {\color{NTXRuleActive}\rule{18mm}{0.55pt}\par}\vspace{2.5mm}%
+      {\NTXSans\scriptsize\color{NTXMuted}\raggedright #2\par}%
+    \column{0.30\textwidth}
+      \centering
+      \NTXHexIcon{38mm}{NTXWatermark}%
+  \end{columns}%
+}
+
+% 5. Code / terminal block for technical workshops
+\newcommand{\NTXCodeBox}[1]{%
+  \par\smallskip
+  {\setlength{\fboxsep}{2.8mm}\setlength{\fboxrule}{0.5pt}%
+   \fcolorbox{NTXRuleActive}{NTXSand}{%
+     \parbox{\dimexpr\linewidth-5.6mm-1pt\relax}{\ttfamily\scriptsize\color{NTXInk}#1}%
+   }\par}\smallskip
+}
+
+% 6. Warm stone frame & dark slate statement/closing frame environments
+\newenvironment{NTXSandFrame}[1][]{%
+  \begingroup
+  \setbeamercolor{background canvas}{bg=NTXSand}%
+  \ifstrempty{#1}{\begin{frame}\relax}{\begin{frame}{#1}\relax}%
+}{%
+  \end{frame}%
+  \endgroup
+}
+
+\newenvironment{NTXDarkFrame}[1][]{%
+  \begingroup
+  \colorlet{NTXPaper}{NTXSlate}%
+  \colorlet{NTXInk}{NTXPaperBase}%
+  \colorlet{NTXMuted}{NTXMutedOnDark}%
+  \colorlet{NTXTeal}{NTXTealOnDark}%
+  \colorlet{NTXRuleActive}{NTXDarkRule}%
+  \setbeamercolor{background canvas}{bg=NTXSlate}%
+  \setbeamercolor{normal text}{fg=NTXInk,bg=NTXSlate}%
+  \setbeamercolor{frametitle}{fg=NTXInk,bg=}%
+  \setbeamercolor{footline}{fg=NTXMuted,bg=}%
+  \setbeamercolor{itemize item}{fg=NTXInk}%
+  \hypersetup{urlcolor=NTXTealOnDark,linkcolor=NTXPaperBase}%
+  \ifstrempty{#1}{\begin{frame}[c]\relax}{\begin{frame}{#1}\relax}%
+}{%
+  \end{frame}%
+  \endgroup
+}
+
+% Compatibility helpers used across NeuroTechX presentations
+\newcommand{\NTXSource}[2]{\par\vspace{2.5mm}{\NTXSans\tiny\color{NTXMuted}\href{#1}{#2}\par}}
+\newcommand{\NTXTakeaway}[1]{\par\vspace{3.5mm}{\NTXSerif\large\bfseries\color{NTXInk}#1\par}}
+\newcommand{\NTXCard}[2]{\begin{block}{#1}#2\end{block}}
+\newcommand{\NTXPoint}[2]{%
+  {\NTXSerif\bfseries\normalsize\color{NTXInk}#1\par}\vspace{0.6mm}%
+  {\NTXSans\small\color{NTXMuted}#2\par}\medskip
+}
+
+% Quiet section divider (dark slate transition card in 2026-27 mode; black in legacyblack mode)
+\newcommand{\NTXDivider}[1]{%
+  \begingroup
+  \ifntx@legacyblack
+    \setbeamertemplate{footline}{%
+      \begin{beamercolorbox}[wd=\paperwidth,ht=7mm,dp=2mm,leftskip=12mm]{footline}%
+        \NTXLogo[25mm]%
+      \end{beamercolorbox}}%
+    \begin{frame}[c]\relax
+      \centering{\NTXSerif\Huge\bfseries #1\par}%
+      \note{Brief section transition, included in the adjacent speaking time.}%
+    \end{frame}%
+  \else
+    \colorlet{NTXInk}{NTXPaperBase}%
+    \colorlet{NTXMuted}{NTXMutedOnDark}%
+    \colorlet{NTXTeal}{NTXTealOnDark}%
+    \setbeamercolor{background canvas}{bg=NTXSlate}%
+    \setbeamercolor{normal text}{fg=NTXPaperBase,bg=NTXSlate}%
+    \begin{frame}[c]\relax
+      {\NTXSerif\fontsize{24}{29}\selectfont\color{NTXPaperBase}#1\par}%
+      \vspace{4mm}%
+      {\color{NTXDarkRule}\rule{20mm}{0.6pt}\par}%
+      \note{Brief section transition, included in the adjacent speaking time.}%
+    \end{frame}%
+  \fi
+  \endgroup
+}
+
+\hypersetup{colorlinks=true,urlcolor=NTXTeal,linkcolor=NTXInk}

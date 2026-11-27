@@ -1,0 +1,84 @@
+graphs:
+
+  - id: Broker
+    nodes:
+      - id: broker
+        module: timeflux.nodes.zmq
+        class: Broker
+
+  - id: OnlineRiemannBCI
+    nodes:
+      - id: lsl_in
+        module: timeflux.nodes.lsl
+        class: Receive
+        params:
+          prop: type
+          value: EEG
+          sync: local
+      - id: bandpass
+        module: timeflux_dsp.nodes.filters
+        class: IIRFilter
+        params:
+          rate: 256
+          order: 4
+          frequencies: [8, 30]
+          filter_type: bandpass
+      - id: events_ui
+        module: timeflux_ui.nodes.ui
+        class: UI
+        params:
+          host: 127.0.0.1
+          port: 8000
+      - id: epochs
+        module: timeflux.nodes.epoch
+        class: Epoch
+        params:
+          event_trigger: training_trial
+          before: 0.0
+          after: 2.0
+      - id: sliding
+        module: timeflux.nodes.window
+        class: Window
+        params:
+          length: 2.0
+          step: 0.25
+      - id: clf
+        module: timeflux.nodes.ml
+        class: Pipeline
+        params:
+          meta_label: [epoch, context, target]
+          steps:
+            - module: pyriemann.estimation
+              class: Covariances
+              args:
+                estimator: oas
+            - module: pyriemann.classification
+              class: MDM
+              args:
+                metric: riemann
+      - id: lsl_out
+        module: timeflux.nodes.lsl
+        class: Send
+        params:
+          name: Timeflux_BCI_Predictions
+          type: Markers
+    edges:
+      - source: lsl_in
+        target: bandpass
+      - source: bandpass
+        target: events_ui:eeg
+      - source: bandpass
+        target: epochs
+      - source: events_ui:events
+        target: epochs:events
+      - source: epochs
+        target: clf:training
+      - source: bandpass
+        target: sliding
+      - source: sliding
+        target: clf
+      - source: clf:events
+        target: events_ui:predictions
+      - source: clf:events
+        target: lsl_out
+    rate: 10
