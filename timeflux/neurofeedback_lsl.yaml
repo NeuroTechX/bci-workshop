@@ -1,0 +1,100 @@
+graphs:
+
+  - id: Broker
+    nodes:
+      - id: broker
+        module: timeflux.nodes.zmq
+        class: Broker
+
+  - id: AcquisitionAndDSP
+    nodes:
+      - id: lsl_in
+        module: timeflux.nodes.lsl
+        class: Receive
+        params:
+          prop: type
+          value: EEG
+          sync: local
+      - id: notch
+        module: timeflux_dsp.nodes.filters
+        class: IIRFilter
+        params:
+          rate: 256
+          order: 2
+          frequencies: [58, 62]
+          filter_type: bandstop
+      - id: bandpass
+        module: timeflux_dsp.nodes.filters
+        class: IIRFilter
+        params:
+          rate: 256
+          order: 4
+          frequencies: [1, 40]
+          filter_type: bandpass
+      - id: window
+        module: timeflux.nodes.window
+        class: Slide
+        params:
+          length: 2.0
+          step: 0.2
+      - id: welch
+        module: timeflux_dsp.nodes.spectral
+        class: Welch
+        params:
+          rate: 256
+      - id: bands
+        module: timeflux_dsp.nodes.spectral
+        class: Bands
+        params:
+          bands:
+            delta: [1, 4]
+            theta: [4, 8]
+            alpha: [8, 12]
+            beta: [12, 30]
+          relative: true
+      - id: pub_eeg
+        module: timeflux.nodes.zmq
+        class: Pub
+        params:
+          topic: eeg_filtered
+      - id: pub_bands
+        module: timeflux.nodes.zmq
+        class: Pub
+        params:
+          topic: bandpower
+    edges:
+      - source: lsl_in
+        target: notch
+      - source: notch
+        target: bandpass
+      - source: bandpass
+        target: pub_eeg
+      - source: bandpass
+        target: window
+      - source: window
+        target: welch
+      - source: welch
+        target: bands
+      - source: bands
+        target: pub_bands
+    rate: 20
+
+  - id: BrowserUI
+    nodes:
+      - id: sub
+        module: timeflux.nodes.zmq
+        class: Sub
+        params:
+          topics: [eeg_filtered, bandpower]
+      - id: ui
+        module: timeflux_ui.nodes.ui
+        class: UI
+        params:
+          host: 127.0.0.1
+          port: 8000
+    edges:
+      - source: sub:eeg_filtered
+        target: ui:eeg
+      - source: sub:bandpower
+        target: ui:bands
+    rate: 10

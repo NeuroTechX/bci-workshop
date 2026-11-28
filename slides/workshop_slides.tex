@@ -1,0 +1,360 @@
+\documentclass[aspectratio=169,11pt,t]{beamer}
+\usetheme{NeuroTechX}
+\usepackage{qrcode}
+
+\NTXTitleKicker{NEUROTECHX · HANDS-ON WORKSHOP KIT · v2.0}
+\title[Intro to BCI Workshop]{Introduction to\\Brain--Computer Interfaces}
+\subtitle{From live EEG signals and artifacts to leak-free machine learning and real-time applications.}
+\author{NeuroTechX Chapters \& Student Clubs}
+\institute{neurotechx.org $\cdot$ github.com/NeuroTechX/bci-workshop}
+\date{2026--27 Edition}
+
+\begin{document}
+
+% 1
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% 2
+\begin{NTXSandFrame}
+  \vspace{3mm}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.66\textwidth}
+      {\NTXSerif\fontsize{17.5}{22.5}\selectfont\color{NTXInk}\raggedright
+        A Brain--Computer Interface translates \emph{\color{NTXTeal}measured central nervous system activity} into artificial outputs that replace, restore, enhance, supplement, or improve natural output.\par}
+      \vspace{4mm}
+      {\color{NTXRule}\rule{18mm}{0.55pt}\par}\vspace{2mm}
+      {\NTXSans\scriptsize\color{NTXMuted}\raggedright
+        Wolpaw \& Wolpaw (2012), \emph{Brain--Computer Interfaces: Principles and Practice}. NeuroTechX BCI Workshop originally created at District 3, Montr\'eal (May 2015).\par}
+    \column{0.30\textwidth}
+      \centering
+      \NTXHexIcon{36mm}{NTXWatermark}%
+  \end{columns}
+\end{NTXSandFrame}
+
+% 3
+\begin{frame}{Workshop roadmap (2.5 hours)}
+  \NTXEyebrow{TODAY'S SESSION}
+  \vspace{2mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.295\textwidth}
+      \NTXCol{1. Signals \& safety}{What scalp EEG actually measures, why blinks and muscle EMG dominate raw traces, and electrical isolation rules.}
+    \column{0.295\textwidth}
+      \NTXCol{2. Live neurofeedback}{Stream over Lab Streaming Layer (LSL), filter mains hum, and measure the Eyes-Closed 8--12 Hz Berger alpha rhythm.}
+    \column{0.295\textwidth}
+      \NTXCol{3. Live binary BCI}{Calibrate Shrinkage LDA and Riemannian MDM decoders, audit window-overlap leakage, and stream live UDP/LSL outputs.}
+  \end{columns}
+  \NTXFooterLink{https://github.com/NeuroTechX/bci-workshop}{github.com/NeuroTechX/bci-workshop}
+\end{frame}
+
+% 4
+\begin{frame}{Ten years of open community iterations}
+  \NTXEyebrow{LINEAGE · 2015 TO 2026}
+  \vspace{1mm}
+  {\NTXSans\scriptsize
+  \renewcommand{\arraystretch}{1.45}
+  \begin{tabular}{@{}p{0.19\textwidth}p{0.24\textwidth}p{0.51\textwidth}@{}}
+    \toprule
+    \textbf{Iteration} & \textbf{Origin} & \textbf{Stack \& Hardware Targets} \\
+    \midrule
+    \texttt{v0.1-mules-2015} & BCI Montr\'eal @ District 3 (Cassani \& Banville) & MuLES TCP + Python, MATLAB \& Octave; Muse 2014, EPOC+, MindWave, Enobio, OpenBCI V3 \\
+    \texttt{v0.2-museio-2016} & Montr\'eal \& early chapters & \texttt{muse-io} OSC/ZMQ + first Jupyter notebooks \\
+    \texttt{v1.0-lsl-2018} & NeuroTechTO \& hacknights & Python 3.6 + \texttt{pylsl} + \texttt{pygatt} BLED112 \\
+    \texttt{v2.0.0} (2026) & Global chapters \& clubs & \texttt{uv}, LSL + BrainFlow + \texttt{pyRiemann} + \texttt{Timeflux} + \texttt{MOABB}; zero-hardware + 18 boards \\
+    \bottomrule
+  \end{tabular}}
+  \NTXFooterLink{https://github.com/NeuroTechX/bci-workshop/blob/main/HISTORY.md}{See HISTORY.md for full provenance and git tags}
+\end{frame}
+
+% 5
+\NTXDivider{Part 1: Signals, Hardware \& Safety}
+
+% 6
+\begin{frame}{The closed-loop BCI pipeline}
+  \NTXEyebrow{ARCHITECTURE}
+  \vspace{2mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.22\textwidth}
+      \NTXCol{1. Acquire}{Amplify µV scalp potentials and stream time-stamped chunks via LSL.}
+    \column{0.22\textwidth}
+      \NTXCol{2. Preprocess}{Causal 50/60 Hz notch + bandpass filter; reject or account for artifacts.}
+    \column{0.22\textwidth}
+      \NTXCol{3. Features}{Welch log-bandpower (δ, θ, α, β) or spatial covariance matrices.}
+    \column{0.22\textwidth}
+      \NTXCol{4. Decode \& Act}{Shrinkage LDA or Riemannian MDM $\rightarrow$ smoothed probability $\rightarrow$ feedback.}
+  \end{columns}
+  \vspace{5mm}
+  {\NTXSans\scriptsize\color{NTXMuted}\textbf{Key systems insight:} Never block acquisition waiting for GUI rendering. Drain all available LSL samples into a ring buffer on every tick.\par}
+\end{frame}
+
+% 7
+\begin{NTXSandFrame}[What scalp EEG sees (and doesn't see)]
+  \NTXEyebrow{BIOPHYSICS}
+  \vspace{1mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.295\textwidth}
+      \NTXStat{5--30 µV}{typical cortical scalp EEG amplitude after skull/CSF spatial smearing}
+    \column{0.295\textwidth}
+      \NTXStat{100+ µV}{eye blinks (EOG) and jaw/forehead muscle activity (EMG, 20--100+ Hz)}
+    \column{0.295\textwidth}
+      \NTXStat{1--5 ms}{temporal resolution---fast enough for real-time closed-loop interaction}
+  \end{columns}
+  \vspace{5mm}
+  {\NTXSans\scriptsize\color{NTXInk}\textbf{Rule \#1 of live BCI:} If your classifier suddenly hits 99\% accuracy, check whether you trained an \emph{eyebrow or jaw-clench detector} instead of a brain decoder!\par}
+\end{NTXSandFrame}
+
+% 8
+\begin{frame}{Three classic non-invasive BCI signal families}
+  \NTXEyebrow{PARADIGMS}
+  \vspace{2mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.295\textwidth}
+      \NTXCol{Spontaneous rhythms}{Berger posterior alpha (8--12 Hz, eyes closed) \& sensorimotor µ/β rhythm (Motor Imagery on C3/C4). \emph{No external stimulus clock required.}}
+    \column{0.295\textwidth}
+      \NTXCol{Evoked potentials (ERP)}{Time-locked voltage deflections such as P300 (300 ms oddball) and N170. \emph{Requires millisecond stimulus--EEG marker sync (\texttt{EEG-ExPy}).}}
+    \column{0.295\textwidth}
+      \NTXCol{Steady-state \& code VEPs}{SSVEP and burst/code-modulated VEP (\texttt{c-VEP} in \texttt{Timeflux}): visual cortex tracks stimulus flicker/codes with fast calibration.}
+  \end{columns}
+  \NTXFooterLink{https://neurotechx.org/learn}{neurotechx.org/learn}
+\end{frame}
+
+% 9
+\begin{frame}{Works on zero hardware or 18+ EEG boards}
+  \NTXEyebrow{HARDWARE AGNOSTIC BY DESIGN}
+  \vspace{1mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{TIER 0: EVERY LAPTOP IN THE ROOM}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \texttt{mock\_eeg\_stream.py}: 1/f noise + 10 Hz Berger alpha + realistic blinks
+        \item \texttt{replay\_eeg\_stream.py}: stream any \texttt{.fif}, \texttt{.edf}, or \texttt{.csv} via LSL
+        \item BrainFlow \texttt{SYNTHETIC\_BOARD} (16-ch 10--20 montage)
+      \end{itemize}
+    \column{0.46\textwidth}
+      \NTXSubSection{TIERS 1--2: CONSUMER \& OPEN HARDWARE}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \textbf{Headbands/Caps:} Muse 2 / S / Athena, Neurosity Crown, BrainBit, g.tec Unicorn, OctaFlow
+        \item \textbf{Open Hardware:} OpenBCI Ganglion/Cyton/Daisy, PiEEG, FreeEEG32, HackEEG, BITalino, BioAmp EXG Pill
+      \end{itemize}
+  \end{columns}
+  \NTXFooterLink{https://github.com/NeuroTechX/bci-workshop/blob/main/docs/TARGETS.md}{Full 22-target setup table in docs/TARGETS.md}
+\end{frame}
+
+% 10
+\begin{NTXDarkFrame}
+  {\NTXSans\bfseries\fontsize{7}{9}\selectfont\color{NTXTeal}\NTXTrack{MANDATORY SAFETY \& ETHICS CHECK}\par}\vspace{2.5mm}
+  {\NTXSerif\fontsize{22}{27}\selectfont\color{NTXInk}Unplug AC wall chargers before touching wired electrodes to skin.\par}
+  \vspace{4mm}
+  {\color{NTXRuleActive}\rule{22mm}{0.6pt}\par}\vspace{4mm}
+  {\NTXSans\small\color{NTXMuted}
+    \begin{itemize}\color{NTXMuted}
+      \item DIY \& wired USB/GPIO boards (\textbf{PiEEG, BioAmp, OpenBCI USB, FreeEEG32, icibici}) must run strictly on \textbf{battery power} or a medical-grade USB isolator.
+      \item Obtain explicit consent before recording anyone's physiological data, and delete calibration traces afterward unless agreed otherwise.
+      \item Educational \& research exploration only---never for clinical diagnosis.
+    \end{itemize}
+  }
+  \NTXFooterLink{https://neurotechx.org/safety-and-ethics}{neurotechx.org/safety-and-ethics}
+\end{NTXDarkFrame}
+
+% 11
+\NTXDivider{Part 2: Exercise 00 \& 01 --- Live Neurofeedback}
+
+% 12
+\begin{frame}{Exercise 00: Verify your setup \& start LSL}
+  \NTXEyebrow{HANDS-ON · 10 MINUTES}
+  {\NTXSans\small\color{NTXMuted}Lab Streaming Layer (LSL) decouples your acquisition driver from your signal-processing code.\par}
+  \vspace{2mm}
+  \NTXCodeBox{%
+    \# 1. One-shot self-test (checks packages, WAV cues, and LSL)\\
+    uv run python exercises/00\_check\_setup.py --self-test\\[1.5mm]
+    \# 2. Terminal 1: keep an EEG stream running (mock, replay, muselsl, or BrainFlow)\\
+    uv run python streams/mock\_eeg\_stream.py%
+  }
+  {\NTXSans\scriptsize\color{NTXMuted}Using a physical Muse? Run \texttt{muselsl stream} or \texttt{python streams/brainflow\_to\_lsl.py --profile muse2} in Terminal 1.\par}
+\end{frame}
+
+% 13
+\begin{NTXSandFrame}[Spectral estimation with Welch's method]
+  \NTXEyebrow{SIGNAL PROCESSING}
+  {\NTXSans\small\color{NTXMuted}Instead of raw unwindowed FFT bins, we estimate Power Spectral Density (µV\textsuperscript{2}/Hz) via Hann-windowed Welch averaging and integrate canonical bands:\par}
+  \vspace{3mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{CANONICAL EEG BANDS}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \textbf{Delta (δ, 1--4 Hz):} Deep sleep, slow movement/blink drift
+        \item \textbf{Theta (θ, 4--8 Hz):} Drowsiness, midline frontal memory/focus
+        \item \textbf{Alpha (α, 8--12 Hz):} Posterior visual idling (\textbf{Berger effect})
+        \item \textbf{Beta (β, 12--30 Hz):} Active sensorimotor \& cognitive engagement
+      \end{itemize}
+    \column{0.46\textwidth}
+      \NTXSubSection{WHY RELATIVE \& LOG BANDPOWER?}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item Raw power spans orders of magnitude and is skewed; $\log_{10}(P)$ stabilizes variance for linear classifiers.
+        \item Relative alpha $P_{\mathrm{alpha}} / P_{1\text{--}45}$ normalizes electrode impedance differences across sessions.
+      \end{itemize}
+  \end{columns}
+\end{NTXSandFrame}
+
+% 14
+\begin{frame}{Exercise 01: Artifacts \& the Berger effect}
+  \NTXEyebrow{HANDS-ON · 30 MINUTES}
+  \NTXCodeBox{%
+    \# Terminal 2 (use --mains 50 in 50 Hz regions)\\
+    uv run python exercises/01\_neurofeedback.py%
+  }
+  \vspace{2mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.295\textwidth}
+      \NTXCol{Step A: Blink}{Blink twice and watch large low-frequency spikes on frontal channels (\texttt{AF7}/\texttt{AF8} or \texttt{Fp1}/\texttt{Fp2}).}
+    \column{0.295\textwidth}
+      \NTXCol{Step B: Jaw clench}{Gently clench your jaw for 2 seconds---high-frequency EMG floods \emph{every} band above 15 Hz.}
+    \column{0.295\textwidth}
+      \NTXCol{Step C: Close eyes}{Relax your face and close your eyes for 12s. Watch posterior 8--12 Hz alpha rise, then drop when you open them!}
+  \end{columns}
+\end{frame}
+
+% 15
+\NTXDivider{Part 3: Exercise 02 --- Live Binary BCI \& Evaluation Rigor}
+
+% 16
+\begin{frame}{Two sample-efficient BCI decoders}
+  \NTXEyebrow{MACHINE LEARNING FOR SMALL CALIBRATION SETS}
+  {\NTXSans\small\color{NTXMuted}With only 15--20 seconds of calibration per class, high-capacity models overfit immediately. Two gold-standard baselines shine in low-data online BCI (Lotte et al., 2018; Chevallier et al., 2024):\par}
+  \vspace{3mm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{1. SHRINKAGE LDA (\texttt{--clf lda})}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item Extracts Welch log-bandpowers + $\log(\mathrm{alpha/theta})$, $\log(\mathrm{alpha/beta})$ ratios per channel.
+        \item Ledoit--Wolf analytical covariance shrinkage keeps linear boundaries well-conditioned even with many features.
+      \end{itemize}
+    \column{0.46\textwidth}
+      \NTXSubSection{2. RIEMANNIAN MDM (\texttt{--clf riemann-mdm})}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item Estimates OAS-regularized spatial covariance matrices $\mathbf{C}$ directly from bandpassed multi-channel EEG.
+        \item Classifies by geodesic distance on the SPD manifold (\texttt{pyRiemann})---no manual spatial filter tuning!
+      \end{itemize}
+  \end{columns}
+\end{frame}
+
+% 17
+\begin{NTXSandFrame}[Don't fool yourself: the overlapping-window trap]
+  \NTXEyebrow{EVALUATION DISCIPLINE}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{THE CLASSIC WORKSHOP BUG}
+      {\NTXSans\scriptsize\color{NTXInk}
+        Slicing a 20s recording into 1.0s windows every 0.2s creates \textbf{80\% overlap} between adjacent epochs.\\[2mm]
+        Evaluating \texttt{clf.score(X, y)} or a shuffled random split puts nearly identical overlapping windows in both train and test---yielding \textbf{95\%+ accuracy even on pure 1/f drift!}
+      \par}
+    \column{0.46\textwidth}
+      \NTXSubSection{HONEST CONTIGUOUS-BLOCK SPLIT}
+      {\NTXSans\scriptsize\color{NTXInk}
+        \texttt{02\_basic\_bci.py} partitions each continuous recording into \textbf{disjoint temporal blocks first}, slices windows \emph{inside} each block, and reports held-out Balanced Accuracy right next to the naive score.\\[2mm]
+        Want formal mastery of leak-free \texttt{Pipeline}s \& non-i.i.d.\ CV? Take the free \textbf{Inria/Probabl scikit-learn MOOC}.
+      \par}
+  \end{columns}
+  \NTXFooterLink{https://inria.github.io/scikit-learn-mooc/}{inria.github.io/scikit-learn-mooc}
+\end{NTXSandFrame}
+
+% 18
+\begin{frame}{Exercise 02 \& 03: Train and hook up an output}
+  \NTXEyebrow{HANDS-ON · 45 MINUTES}
+  \NTXCodeBox{%
+    \# Terminal 2: Calibrate Class 0 vs. Class 1 \& stream live predictions\\
+    uv run python exercises/02\_basic\_bci.py --clf lda\\[1.2mm]
+    \# Try Riemannian Minimum Distance to Mean on 4+ channels:\\
+    uv run python exercises/02\_basic\_bci.py --clf riemann-mdm\\[1.2mm]
+    \# Terminal 3: Receive live JSON predictions over UDP (127.0.0.1:5005)\\
+    uv run python exercises/03\_udp\_output\_demo.py%
+  }
+  {\NTXSans\scriptsize\color{NTXMuted}Every prediction is simultaneously broadcast on LSL (\texttt{BCI\_Decisions}) and UDP JSON for games, synths, WebSockets, or Arduino/ESP32.\par}
+\end{frame}
+
+% 19
+\begin{frame}{Path B: Declarative pipelines \& Web UIs with Timeflux}
+  \NTXEyebrow{HACKATHON ENGINE · TIMEFLUX}
+  {\NTXSans\scriptsize\color{NTXMuted}When moving from a single script to multi-process acquisition, stimulus sync, and browser dashboards, switch to \textbf{Timeflux} (\texttt{timeflux/}):\par}
+  \NTXCodeBox{%
+    uv pip install timeflux timeflux-dsp timeflux-ui pyriemann\\
+    timeflux -d timeflux/neurofeedback\_lsl.yaml   \# http://localhost:8000/monitor/%
+  }
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{INCLUDED IN THIS REPO}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \texttt{neurofeedback\_lsl.yaml}: LSL $\rightarrow$ IIR $\rightarrow$ Welch $\rightarrow$ Web UI
+        \item \texttt{bci\_riemann\_lsl.yaml}: Online OAS Covariance + MDM
+      \end{itemize}
+    \column{0.46\textwidth}
+      \NTXSubSection{FULL APPS IN TIMEFLUX/DEMOS}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item Auditory/visual Oddball \& P300 Speller
+        \item Fast-calibration dry-EEG \texttt{c-VEP} Speller \& EMG Roshambo
+      \end{itemize}
+  \end{columns}
+  \NTXFooterLink{https://github.com/timeflux/demos}{github.com/timeflux/demos}
+\end{frame}
+
+% 20
+\begin{frame}{Bonus Track: EEG-to-Image \& 2026 Challenge}
+  \NTXEyebrow{EXERCISE 05 · ALLJOINED \& NEURAL-INTERFACES 2026}
+  \NTXCodeBox{%
+    \# Zero-GPU visual-ERP -> DINOv2/CLIP embedding retrieval (Top-1 / Top-5):\\
+    uv run python exercises/05\_eeg\_to\_image\_retrieval.py%
+  }
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{EEG TO IMAGE (TRACK 01 \& ALLJOINED)}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \textbf{Retrieval first:} \texttt{RidgeCV}/\texttt{EEGNet} maps 1s visual epochs to \texttt{DINOv2}/\texttt{CLIP} latents on \textbf{32-ch Emotiv} (\texttt{Alljoined-1.6M}, CC BY-NC-SA 4.0).
+        \item \textbf{SNR honesty:} \texttt{ENIGMA} (CLIP + SDXL Turbo) averages 80 repeats of \emph{seen} images---not single-trial thought reading!
+      \end{itemize}
+    \column{0.46\textwidth}
+      \NTXSubSection{TRACKS 02--04 LESSONS IN THIS KIT}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \textbf{Track 02 (\texttt{PROTEUS}):} Causal \texttt{B=1} zero-cal adaptation (\texttt{--online-adapt}) \& 3-class mental strategies.
+        \item \textbf{Track 03 \& 04:} \textbf{4-ch Muse} home sleep-onset regression (\texttt{W-bMAE}) \& 16-ch wrist \textbf{EMG2Pose}.
+      \end{itemize}
+  \end{columns}
+  \NTXFooterLink{https://neural-interfaces26.github.io/}{neural-interfaces26.github.io $\cdot$ github.com/Alljoined/ENIGMA}
+\end{frame}
+
+% 21
+\begin{NTXSandFrame}[Going further across the NeuroTechX ecosystem]
+  \NTXEyebrow{NEXT STEPS FOR CHAPTERS \& RESEARCHERS}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.295\textwidth}
+      \NTXCol{EEG-ExPy}{Stimulus-locked P300, N170 \& SSVEP experiments in Python with PsychoPy + MNE + BrainFlow.}
+    \column{0.295\textwidth}
+      \NTXCol{MOABB \& pyRiemann}{Benchmark 30+ pipelines reproducibly across 36+ public datasets (see Exercise 04).}
+    \column{0.295\textwidth}
+      \NTXCol{Braindecode, SPD Learn \& FMs}{Deep \& geometric learning on EEG, \texttt{EEGDash} (700+ BIDS datasets), and \texttt{OpenEEGBench} reality checks.}
+  \end{columns}
+  \vspace{1.0mm}
+  {\NTXSans\scriptsize\color{NTXMuted}\textbf{2026 benchmark takeaway} (\emph{NeuroAtlas}; \emph{OpenEEGBench}): Always keep strong Shrinkage LDA and Riemannian baselines alongside deep/foundation models!\par}
+  \NTXFooterLink{https://neurotechx.org/projects}{neurotechx.org/projects}
+\end{NTXSandFrame}
+
+% 22
+\begin{NTXDarkFrame}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.62\textwidth}
+      \NTXBadge[13.5mm]\par\vspace{5mm}
+      {\NTXSerif\fontsize{25}{29}\selectfont\color{NTXInk}Start hacking.\par}
+      \vspace{4mm}
+      {\color{NTXRuleActive}\rule{18mm}{0.6pt}\par}\vspace{4mm}
+      {\NTXSans\small\color{NTXMuted}
+        \href{https://github.com/NeuroTechX/bci-workshop}{github.com/NeuroTechX/bci-workshop}\par\smallskip
+        \href{https://neurotechx.org/learn}{neurotechx.org/learn}\par\smallskip
+        \href{https://neurotechx.org/community}{neurotechx.org/community}\par
+      }
+    \column{0.30\textwidth}
+      \centering
+      {\setlength{\fboxsep}{3mm}\colorbox{white}{\color{black}\qrcode[height=30mm,level=M,hyperlink=false]{https://github.com/NeuroTechX/bci-workshop}}}
+  \end{columns}
+\end{NTXDarkFrame}
+
+\end{document}
