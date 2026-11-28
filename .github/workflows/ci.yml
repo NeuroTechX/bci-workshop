@@ -17,6 +17,6 @@ jobs:
           uv venv
           uv pip install -e ".[riemann,dev]"
       - name: Run Unit & Live LSL Integration Suite
-        run: uv run pytest -v
+        run: uv run --no-sync pytest -v
       - name: Run Exercise 00 Setup Self-Test
-        run: uv run python exercises/00_check_setup.py --self-test
+        run: uv run --no-sync python exercises/00_check_setup.py --self-test
