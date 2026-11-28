@@ -12,10 +12,16 @@ import numpy as np
 import pytest
 
 from bci_workshop.audio import generate_beep_wav
-from bci_workshop.classifier import build_bci_pipeline, evaluate_bci_dataset
+from bci_workshop.classifier import CausalSessionAdapter, build_bci_pipeline, evaluate_bci_dataset
 from bci_workshop.dsp import OnlineFilterBank, compute_bandpowers, extract_epoch_features, slice_epochs
 from bci_workshop.lsl_buffer import EEGStreamBuffer
 from bci_workshop.profiles import DEVICE_PROFILES, get_profile
+from bci_workshop.retrieval import (
+    evaluate_gallery_retrieval,
+    extract_visual_eeg_features,
+    fit_ridge_image_decoder,
+    simulate_visual_erp_dataset,
+)
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -77,9 +83,16 @@ def test_leakage_audit_and_classifiers() -> None:
     for kind in ("lda", "logreg", "svm"):
         pipe, summary = evaluate_bci_dataset(c0, c1, sfreq=sfreq, kind=kind, epoch_sec=1.0, step_sec=0.25)
         assert summary.contiguous_block_acc > 0.85
+        assert summary.contiguous_block_bal_acc > 0.85
         epochs = slice_epochs(c1[:500], sfreq=sfreq, epoch_sec=1.0, step_sec=0.5)
         probs = pipe.predict_proba(epochs)
         assert probs.shape == (len(epochs), 2)
+
+    adapter = CausalSessionAdapter()
+    shifted = np.ones((8, 6)) * 12.0 + rng.normal(0.0, 0.5, size=(8, 6))
+    centered = adapter.update_and_center(shifted)
+    assert abs(float(centered[-1].mean())) < 1.0
+    adapter.reset_state()
 
     # Also verify pyRiemann pipelines if installed in environment
     try:
@@ -126,3 +139,38 @@ def test_live_lsl_mock_to_ring_buffer_roundtrip() -> None:
             proc.wait(timeout=3)
         except subprocess.TimeoutExpired:
             proc.kill()
+
+
+def test_eeg_to_image_retrieval_and_repeat_snr_scaling() -> None:
+    ds = simulate_visual_erp_dataset(
+        n_train_images=160,
+        n_test_images=80,
+        train_repeats=4,
+        test_repeats=16,
+        n_channels=32,
+        sfreq=120.0,
+        embed_dim=64,
+        single_trial_snr=0.11,
+        seed=11,
+    )
+    mean_model = fit_ridge_image_decoder(ds["train_epochs"], ds["train_embeddings"], mode="mean")
+    erp_model = fit_ridge_image_decoder(ds["train_epochs"], ds["train_embeddings"], mode="spatiotemporal")
+
+    pred_mean = mean_model.predict(extract_visual_eeg_features(ds["test_epochs"], mode="mean"))
+    pred_erp = erp_model.predict(extract_visual_eeg_features(ds["test_epochs"], mode="spatiotemporal"))
+
+    m_mean = evaluate_gallery_retrieval(
+        pred_mean, ds["test_image_ids"], ds["gallery_embeddings"], ds["gallery_image_ids"], max_repeats=16
+    )
+    m_erp_1 = evaluate_gallery_retrieval(
+        pred_erp, ds["test_image_ids"], ds["gallery_embeddings"], ds["gallery_image_ids"], max_repeats=1
+    )
+    m_erp_16 = evaluate_gallery_retrieval(
+        pred_erp, ds["test_image_ids"], ds["gallery_embeddings"], ds["gallery_image_ids"], max_repeats=16
+    )
+
+    # Time-resolved ERP bins must outperform collapsed channel means on biphasic ERPs,
+    # and multi-repeat averaging must strongly beat single-trial Top-5 accuracy.
+    assert m_erp_16.top5_acc > m_mean.top5_acc + 0.25
+    assert m_erp_16.top5_acc > m_erp_1.top5_acc + 0.20
+    assert m_erp_16.top5_acc > 0.65

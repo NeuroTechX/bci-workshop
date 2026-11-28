@@ -31,7 +31,8 @@ if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
 from bci_workshop.audio import play_cue  # noqa: E402
-from bci_workshop.classifier import evaluate_bci_dataset  # noqa: E402
+from bci_workshop.classifier import CausalSessionAdapter, SpectralFeatureTransformer, evaluate_bci_dataset  # noqa: E402
+from bci_workshop.dsp import slice_epochs  # noqa: E402
 from bci_workshop.lsl_buffer import EEGStreamBuffer  # noqa: E402
 
 
@@ -59,6 +60,11 @@ def main() -> None:
     parser.add_argument("--smooth", type=int, default=5, help="Moving-average smoothing over N predictions")
     parser.add_argument("--udp-port", type=int, default=5005, help="Local UDP JSON output port (0 to disable)")
     parser.add_argument("--live-seconds", type=float, default=0.0, help="Stop live loop after N seconds (0 = infinite)")
+    parser.add_argument(
+        "--online-adapt",
+        action="store_true",
+        help="Enable causal label-free running feature recentering (2026 Challenge Track 02 style)",
+    )
     parser.add_argument("--auto-cue", action="store_true", help="Skip interactive Enter prompts (for mock/CI runs)")
     parser.add_argument("--mute", action="store_true", help="Silence audio cue tones")
     args = parser.parse_args()
@@ -99,7 +105,10 @@ def main() -> None:
         print(f"  Total epochs trained          : {summary.n_epochs_total}")
         print(f"  Training resubstitution score : {summary.train_resubstitution_acc * 100:5.1f}%  (legacy 2017 metric — optimistic!)")
         print(f"  Naive random CV (80% overlap) : {summary.naive_overlap_random_acc * 100:5.1f}%  (inflated by window bleed)")
-        print(f"  Contiguous temporal block CV  : {summary.contiguous_block_acc * 100:5.1f}%  <-- Honest generalization estimate")
+        print(
+            f"  Contiguous temporal block CV  : {summary.contiguous_block_acc * 100:5.1f}%  "
+            f"(Balanced Acc: {summary.contiguous_block_bal_acc * 100:5.1f}%) <-- Honest estimate"
+        )
 
         # Set up LSL + UDP output buses for downstream hackathon apps
         out_info = StreamInfo(
@@ -114,6 +123,18 @@ def main() -> None:
         udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) if args.udp_port > 0 else None
 
         prob_hist: collections.deque[float] = collections.deque(maxlen=max(1, args.smooth))
+        session_adapter = CausalSessionAdapter() if args.online_adapt else None
+        cal_feat_mean: np.ndarray | None = None
+        if session_adapter is not None and "psd" in pipeline.named_steps:
+            psd_step: SpectralFeatureTransformer = pipeline.named_steps["psd"]
+            cal_epochs = np.concatenate(
+                [
+                    slice_epochs(rec_c0, sfreq=buf.sfreq, epoch_sec=args.epoch_sec, step_sec=args.step_sec),
+                    slice_epochs(rec_c1, sfreq=buf.sfreq, epoch_sec=args.epoch_sec, step_sec=args.step_sec),
+                ],
+                axis=0,
+            )
+            cal_feat_mean = psd_step.transform(cal_epochs).mean(axis=0, keepdims=True)
         print(
             f"\n=== Live BCI Decoding (LSL 'BCI_Decisions' + UDP 127.0.0.1:{args.udp_port}) ===\n"
             "Press Ctrl+C to stop."
@@ -129,7 +150,12 @@ def main() -> None:
             epoch = buf.get_latest_window(args.epoch_sec, filtered=True)
             X_live = epoch.T[np.newaxis, :, :]  # (1, n_ch, n_times)
 
-            if hasattr(pipeline, "predict_proba"):
+            if session_adapter is not None and cal_feat_mean is not None and "psd" in pipeline.named_steps:
+                raw_feat = pipeline.named_steps["psd"].transform(X_live)
+                adapted_feat = session_adapter.update_and_center(raw_feat) + cal_feat_mean
+                tail = pipeline[1:]
+                p1 = float(tail.predict_proba(adapted_feat)[0, 1]) if hasattr(tail, "predict_proba") else float(tail.predict(adapted_feat)[0])
+            elif hasattr(pipeline, "predict_proba"):
                 p1 = float(pipeline.predict_proba(X_live)[0, 1])
             else:
                 p1 = float(pipeline.predict(X_live)[0])

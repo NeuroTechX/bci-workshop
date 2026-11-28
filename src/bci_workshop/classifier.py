@@ -9,12 +9,43 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import balanced_accuracy_score
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 from .dsp import extract_epoch_features, slice_epochs
+
+
+class CausalSessionAdapter:
+    """Label-free causal running feature/epoch recenterer (`reset_state()` per session).
+
+    Mirrors the zero-calibration streaming adaptation contract of Track 02 (`PROTEUS`)
+    in `neural-interfaces26/2026-competition` (`benchmark_utils/streaming.py`): each live
+    window ``X_t`` is centered using ONLY current and past unlabeled windows in the session,
+    mitigating slow baseline/impedance drift across sessions without peeking ahead.
+    """
+
+    def __init__(self, momentum: float = 0.05) -> None:
+        self.momentum = float(momentum)
+        self._running_mean: np.ndarray | None = None
+        self._n_seen: int = 0
+
+    def reset_state(self) -> None:
+        self._running_mean = None
+        self._n_seen = 0
+
+    def update_and_center(self, x: np.ndarray) -> np.ndarray:
+        arr = np.asarray(x, dtype=np.float64)
+        sample_mean = arr.mean(axis=0, keepdims=True)
+        self._n_seen += len(arr)
+        if self._running_mean is None:
+            self._running_mean = sample_mean.copy()
+        else:
+            alpha = max(self.momentum, 1.0 / self._n_seen)
+            self._running_mean = (1.0 - alpha) * self._running_mean + alpha * sample_mean
+        return arr - self._running_mean
 
 
 class SpectralFeatureTransformer(BaseEstimator, TransformerMixin):
@@ -95,6 +126,7 @@ def build_bci_pipeline(kind: str = "lda", sfreq: float = 256.0) -> Pipeline:
 @dataclass(frozen=True)
 class EvaluationSummary:
     contiguous_block_acc: float
+    contiguous_block_bal_acc: float
     naive_overlap_random_acc: float
     train_resubstitution_acc: float
     n_epochs_total: int
@@ -135,6 +167,7 @@ def evaluate_bci_dataset(
     c1_chunks = np.array_split(c1, n_blocks, axis=0)
 
     block_scores: list[float] = []
+    block_bal_scores: list[float] = []
     for fold in range(n_blocks):
         train_epochs_list: list[np.ndarray] = []
         train_labels_list: list[np.ndarray] = []
@@ -158,7 +191,9 @@ def evaluate_bci_dataset(
 
         fold_pipe = build_bci_pipeline(kind=kind, sfreq=sfreq)
         fold_pipe.fit(X_tr, y_tr)
-        block_scores.append(float(fold_pipe.score(X_te, y_te)))
+        y_pred = fold_pipe.predict(X_te)
+        block_scores.append(float(np.mean(y_pred == y_te)))
+        block_bal_scores.append(float(balanced_accuracy_score(y_te, y_pred)))
 
     # 2. Full overlapping dataset for final live decoder + naive comparison
     ep0_all = slice_epochs(c0, sfreq=sfreq, epoch_sec=epoch_sec, step_sec=step_sec)
@@ -175,6 +210,7 @@ def evaluate_bci_dataset(
 
     summary = EvaluationSummary(
         contiguous_block_acc=float(np.mean(block_scores)),
+        contiguous_block_bal_acc=float(np.mean(block_bal_scores)),
         naive_overlap_random_acc=float(np.mean(naive_scores)),
         train_resubstitution_acc=resub_acc,
         n_epochs_total=int(len(y_all)),

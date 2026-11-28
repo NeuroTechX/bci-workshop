@@ -102,7 +102,21 @@ uv run python exercises/02_basic_bci.py --clf riemann-mdm
 uv run python exercises/03_udp_output_demo.py
 ```
 
-* **Evaluation rule:** Slicing 20s into 80%-overlapping 1s windows leaks correlated neighbors into random CV splits (`95%+` on pure drift!). Always trust **contiguous temporal block CV**.
+* **Evaluation rule:** Slicing 20s into 80%-overlapping 1s windows leaks correlated neighbors into random CV splits (`95%+` on pure drift!). Always trust **contiguous temporal block CV** & **Balanced Accuracy** (and deepen your `Pipeline` + non-i.i.d. CV skills via the free [Inria/Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/) & [Probabl Certification](https://certification.probabl.ai/)).
+
+---
+
+### BONUS TRACK · EXERCISE 05 & 2026 CHALLENGE
+
+## EEG-to-Image Retrieval & 2026 Foundation Challenge
+
+```bash
+# CPU-fast zero-shot visual embedding retrieval (Mean-Ridge vs. Spatiotemporal-ERP-Ridge)
+uv run python exercises/05_eeg_to_image_retrieval.py
+```
+
+* **Track 01 (`EEG -> Image`, Alljoined-1.6M + Meta FAIR):** Maps `1.0s` visual-evoked epochs (`-0.2..+0.8s` @ `120 Hz` on 32-ch Emotiv, `CC BY-NC-SA 4.0`) onto `DINOv2`/`CLIP` embeddings for **Top-5 unseen-image retrieval**; GPU teams can extend to [`Alljoined/ENIGMA`](https://github.com/Alljoined/ENIGMA) (`MIT`, CLIP + SDXL Turbo, averaging ~80 repeats of *viewed* images).
+* **Tracks 02–04 ([neural-interfaces26.github.io](https://neural-interfaces26.github.io/)):** Causal `B=1` zero-calibration recentering (`--online-adapt` in `02_basic_bci.py`, `PROTEUS`), **4-ch Muse** sleep-onset regression (`W-bMAE`), and 16-ch wrist **EMG2Pose**.
 
 ---
 

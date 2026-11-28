@@ -35,20 +35,32 @@ uv run python streams/mock_eeg_stream.py
 ```bash
 # Terminal 2 — Run Exercise 01 (Neurofeedback) and Exercise 02 (Calibrated Live BCI)
 uv run python exercises/01_neurofeedback.py
-uv run python exercises/02_basic_bci.py --clf lda          # or --clf riemann-mdm
+uv run python exercises/02_basic_bci.py --clf lda          # or --clf riemann-mdm --online-adapt
 uv run python exercises/03_udp_output_demo.py              # in a 3rd terminal to receive live BCI JSON!
+
+# Bonus — CPU-fast EEG-to-Image zero-shot retrieval lab (2026 Challenge Track 01 / Alljoined style)
+uv run python exercises/05_eeg_to_image_retrieval.py
 ```
 
 *(In 50 Hz mains regions such as Europe, Asia, Africa, and Australia, pass `--mains 50`.)*
 
+### Recommended Machine-Learning Brush-Up (Optional)
+
+Because BCI evaluation fails silently whenever preprocessing or overlapping time windows leak across train/test splits, we recommend the free **[Inria / Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)** (especially the modules on `Pipeline` composition and non-i.i.d. `GroupKFold` / `TimeSeriesSplit` validation) and **[Probabl's official scikit-learn Certification](https://certification.probabl.ai/)** (*Associate* & *Professional Practitioner*).
+
 ---
 
-## Two Parallel Real-Time Paths Included
+## Two Parallel Real-Time Paths + 2026 Challenge Tracks
 
 1. **Path A — Transparent Python (`exercises/` + `src/bci_workshop/`):**
-   Inspectable scripts teaching non-lagging LSL ring buffers, causal IIR notch/bandpass filtering, Welch PSD bandpower neurofeedback (**Berger 8–12 Hz alpha effect**), Shrinkage LDA vs. **Riemannian Geometry (`pyRiemann` MDM / Tangent Space)**, **temporal leakage auditing** (contiguous block CV vs. naive overlapping-window CV), and live LSL/UDP outputs.
+   Inspectable scripts teaching non-lagging LSL ring buffers, causal IIR notch/bandpass filtering, Welch PSD bandpower neurofeedback (**Berger 8–12 Hz alpha effect**), Shrinkage LDA vs. **Riemannian Geometry (`pyRiemann` MDM / Tangent Space)**, **temporal leakage auditing & Balanced Accuracy**, **causal label-free session adaptation (`--online-adapt`)**, and live LSL/UDP outputs.
 2. **Path B — Declarative Graphs & Browser UI (`timeflux/`):**
    Ready-to-run YAML pipelines for **[Timeflux](https://timeflux.io)** serving live browser dashboards (`http://localhost:8000`) and connecting directly into [`timeflux/demos`](https://github.com/timeflux/demos) (Oddball, EMG Roshambo, P300 Speller, and dry-EEG `c-VEP` Speller). See [`timeflux/README.md`](timeflux/README.md).
+3. **2026 EEG/EMG Foundation Challenge Bridge ([`neural-interfaces26`](https://neural-interfaces26.github.io/)):**
+   * **Track 01 (`EEG -> Image`):** [`exercises/05_eeg_to_image_retrieval.py`](exercises/05_eeg_to_image_retrieval.py) implements CPU-friendly zero-shot visual embedding retrieval (`RidgeCV` onto `DINOv2`/`CLIP` latents, comparing single-trial vs. multi-repeat SNR) and links directly to **[`Alljoined/Alljoined-1.6M`](https://huggingface.co/datasets/Alljoined/Alljoined-1.6M)** (`32-ch` Emotiv, NEMAR `nm000134`, `CC BY-NC-SA 4.0`) and **[`Alljoined/ENIGMA`](https://github.com/Alljoined/ENIGMA)** (`MIT`, CLIP + SDXL Turbo reconstruction of *viewed* images).
+   * **Track 02 (`Cross-Session BCI`, `PROTEUS` `nm000290`):** Causal `B=1` streaming (`reset_state()`), label-free running recentering (`--online-adapt` in `02_basic_bci.py`), and 3-class mental commands (motor imagery, mental subtraction, word generation).
+   * **Track 03 (`4-ch Muse Home EEG Regression`, `nm000287`):** Continuous time-to-sleep-onset (`0–600 s`) regression on 4-channel Muse headbands with domain-weighted error (`W-bMAE`).
+   * **Track 04 (`EMG -> Pose`, `EMG2Pose`):** 16-ch wrist surface EMG to continuous 20-joint hand pose angles.
 
 ---
 

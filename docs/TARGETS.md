@@ -52,7 +52,7 @@ Run `python exercises/00_check_setup.py --list-targets` to inspect the 18 built-
 | 16 | `brainbit` | **BrainBit Headband** | `250 Hz`, 4 ch (`T3, T4, O1, O2`) | `python streams/brainflow_to_lsl.py --profile brainbit` |
 | 17 | `unicorn` | **g.tec Unicorn Hybrid Black** | `250 Hz`, 8 ch | `python streams/brainflow_to_lsl.py --profile unicorn` or Unicorn LSL |
 | 18 | `octaflow` | **Neurogate OctaFlow (OctaEEG)** | `250 Hz`, 8 ch | Native LSL output or `timeflux_octaeeg` |
-| — | *LSL Passthrough* | **EMOTIV EPOC X / Insight, Bitbrain, MindAffect, ANT eego** | Vendor-native | Enable LSL outlet in vendor software (e.g., EmotivPRO LSL) — `exercises/01` & `02` auto-discover any `type='EEG'` stream! |
+| — | *LSL Passthrough* | **EMOTIV EPOC X / Flex / Insight, Bitbrain, MindAffect, ANT eego** | Vendor-native | Enable LSL outlet in vendor software (e.g., EmotivPRO LSL; note 32-ch Emotiv is the montage of `Alljoined-1.6M` in 2026 Challenge Track 01!) — `exercises/01` & `02` auto-discover any `type='EEG'` stream! |
 | — | *Historical / DIY* | **icibici (Single-channel audio EEG)** | Audio ADC | Documented in NeuroTechX hardware archives; **never use while any connected device is plugged into wall power**. |
 
 ---

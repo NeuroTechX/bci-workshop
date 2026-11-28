@@ -33,6 +33,8 @@ pip install -e ".[riemann,dev]"
 python exercises/00_check_setup.py --self-test
 ```
 
+> **Optional ML Refresher:** New to `scikit-learn` `Pipeline`s or time-series/grouped cross-validation? Browse the free **[Inria / Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)** (which also prepares you for **[Probabl's scikit-learn Certification](https://certification.probabl.ai/)**).
+
 ---
 
 ## 2. Starting an EEG Stream (Terminal 1)
@@ -99,4 +101,17 @@ While `02_basic_bci.py` is running in Terminal 2, open **Terminal 3**:
 python exercises/03_udp_output_demo.py
 ```
 
-`02_basic_bci.py` streams JSON packets (`{"class": 1, "prob_class1": 0.84, ...}`) to `udp://127.0.0.1:5005` *and* onto an LSL stream named `BCI_Decisions`. Modify `03_udp_output_demo.py`—or switch to **Path B (`timeflux/`)**—to drive audio, visuals, games, or robotics!
+`02_basic_bci.py` streams JSON packets (`{"class": 1, "prob_class1": 0.84, ...}`) to `udp://127.0.0.1:5005` *and* onto an LSL stream named `BCI_Decisions` (add `--online-adapt` to test causal label-free session drift recentering!). Modify `03_udp_output_demo.py`—or switch to **Path B (`timeflux/`)**—to drive audio, visuals, games, or robotics!
+
+---
+
+## 6. Bonus Track — EEG-to-Image Zero-Shot Retrieval (`Exercise 05`)
+
+Explore how Track 01 of the **[2026 EEG/EMG Foundation Challenge](https://neural-interfaces26.github.io/)** and **[Alljoined](https://huggingface.co/datasets/Alljoined/Alljoined-1.6M)** decode visual-evoked EEG epochs (`-0.2s` to `+0.8s` @ `120 Hz`) into image embeddings (`DINOv2-giant` / `CLIP`) on CPU in 3 seconds:
+
+```bash
+python exercises/05_eeg_to_image_retrieval.py
+```
+
+* Compare **Channel-Mean Ridge** (the official competition starter) against **Spatiotemporal ERP Ridge** (preserving P100/N170/P300 latency bins) on **unseen candidate images**.
+* Inspect the **Repeat-Averaging SNR table (`K = 1..16` repeats)** to see why single-trial visual EEG is noisy while multi-repeat pooling drives sharp Top-5 retrieval and generative reconstructions (`Alljoined/ENIGMA` averages ~80 repetitions of *viewed* images; note `Alljoined-1.6M` is `CC BY-NC-SA 4.0`).

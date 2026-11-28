@@ -252,10 +252,11 @@
     \column{0.46\textwidth}
       \NTXSubSection{HONEST CONTIGUOUS-BLOCK SPLIT}
       {\NTXSans\scriptsize\color{NTXInk}
-        \texttt{02\_basic\_bci.py} partitions each continuous recording into \textbf{disjoint temporal blocks first}, slices windows \emph{inside} each block, and reports held-out block accuracy right next to the naive score.\\[2mm]
-        Same principle behind \texttt{MOABB}'s \texttt{WithinSessionEvaluation} and pseudo-online benchmarks.
+        \texttt{02\_basic\_bci.py} partitions each continuous recording into \textbf{disjoint temporal blocks first}, slices windows \emph{inside} each block, and reports held-out Balanced Accuracy right next to the naive score.\\[2mm]
+        Want formal mastery of leak-free \texttt{Pipeline}s \& non-i.i.d.\ CV? Take the free \textbf{Inria/Probabl scikit-learn MOOC} \& \textbf{Probabl Certification}.
       \par}
   \end{columns}
+  \NTXFooterLink{https://inria.github.io/scikit-learn-mooc/}{inria.github.io/scikit-learn-mooc $\cdot$ certification.probabl.ai}
 \end{NTXSandFrame}
 
 % 18
@@ -298,6 +299,30 @@
 \end{frame}
 
 % 20
+\begin{frame}{Bonus Track: EEG-to-Image \& 2026 Challenge}
+  \NTXEyebrow{EXERCISE 05 · ALLJOINED \& NEURAL-INTERFACES 2026}
+  \NTXCodeBox{%
+    \# Zero-GPU visual-ERP -> DINOv2/CLIP embedding retrieval (Top-1 / Top-5):\\
+    uv run python exercises/05\_eeg\_to\_image\_retrieval.py%
+  }
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \NTXSubSection{EEG TO IMAGE (TRACK 01 \& ALLJOINED)}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \textbf{Retrieval first:} \texttt{RidgeCV}/\texttt{EEGNet} maps 1s visual epochs to \texttt{DINOv2}/\texttt{CLIP} latents on \textbf{32-ch Emotiv} (\texttt{Alljoined-1.6M}, CC BY-NC-SA 4.0).
+        \item \textbf{SNR honesty:} \texttt{ENIGMA} (CLIP + SDXL Turbo) averages 80 repeats of \emph{seen} images---not single-trial thought reading!
+      \end{itemize}
+    \column{0.46\textwidth}
+      \NTXSubSection{TRACKS 02--04 LESSONS IN THIS KIT}
+      \begin{itemize}\scriptsize\color{NTXInk}
+        \item \textbf{Track 02 (\texttt{PROTEUS}):} Causal \texttt{B=1} zero-cal adaptation (\texttt{--online-adapt}) \& 3-class mental strategies.
+        \item \textbf{Track 03 \& 04:} \textbf{4-ch Muse} home sleep-onset regression (\texttt{W-bMAE}) \& 16-ch wrist \textbf{EMG2Pose}.
+      \end{itemize}
+  \end{columns}
+  \NTXFooterLink{https://neural-interfaces26.github.io/}{neural-interfaces26.github.io $\cdot$ github.com/Alljoined/ENIGMA}
+\end{frame}
+
+% 21
 \begin{NTXSandFrame}[Going further across the NeuroTechX ecosystem]
   \NTXEyebrow{NEXT STEPS FOR CHAPTERS \& RESEARCHERS}
   \begin{columns}[T,onlytextwidth]
@@ -308,12 +333,12 @@
     \column{0.295\textwidth}
       \NTXCol{Braindecode, SPD Learn \& FMs}{Deep \& geometric learning on EEG, \texttt{EEGDash} (700+ BIDS datasets), and \texttt{OpenEEGBench} reality checks.}
   \end{columns}
-  \vspace{2.5mm}
+  \vspace{1.0mm}
   {\NTXSans\scriptsize\color{NTXMuted}\textbf{2026 benchmark takeaway} (\emph{NeuroAtlas}; \emph{OpenEEGBench}): Always keep strong Shrinkage LDA and Riemannian baselines alongside deep/foundation models!\par}
   \NTXFooterLink{https://neurotechx.org/projects}{neurotechx.org/projects}
 \end{NTXSandFrame}
 
-% 21
+% 22
 \begin{NTXDarkFrame}
   \begin{columns}[c,onlytextwidth]
     \column{0.62\textwidth}
