@@ -49,7 +49,7 @@ uv run python exercises/05_eeg_to_image_retrieval.py --npz data/alljoined_sub01_
 
 ### Recommended Machine-Learning Brush-Up (Optional)
 
-Because BCI evaluation fails silently whenever preprocessing or overlapping time windows leak across train/test splits, we recommend the free **[Inria / Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)** (especially the modules on `Pipeline` composition and non-i.i.d. `GroupKFold` / `TimeSeriesSplit` validation) and **[Probabl's official scikit-learn Certification](https://certification.probabl.ai/)** (*Associate* & *Professional Practitioner*).
+Because BCI evaluation fails silently whenever preprocessing or overlapping time windows leak across train/test splits, we recommend the free **[Inria / Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)** (especially the modules on `Pipeline` composition and non-i.i.d. `GroupKFold` / `TimeSeriesSplit` validation).
 
 ---
 

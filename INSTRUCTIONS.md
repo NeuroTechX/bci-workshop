@@ -33,7 +33,7 @@ pip install -e ".[riemann,dev]"
 python exercises/00_check_setup.py --self-test
 ```
 
-> **Optional ML Refresher:** New to `scikit-learn` `Pipeline`s or time-series/grouped cross-validation? Browse the free **[Inria / Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)** (which also prepares you for **[Probabl's scikit-learn Certification](https://certification.probabl.ai/)**).
+> **Optional ML Refresher:** New to `scikit-learn` `Pipeline`s or time-series/grouped cross-validation? Browse the free **[Inria / Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)**.
 
 ---
 

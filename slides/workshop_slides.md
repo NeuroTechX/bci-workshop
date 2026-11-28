@@ -102,7 +102,7 @@ uv run python exercises/02_basic_bci.py --clf riemann-mdm
 uv run python exercises/03_udp_output_demo.py
 ```
 
-* **Evaluation rule:** Slicing 20s into 80%-overlapping 1s windows leaks correlated neighbors into random CV splits (`95%+` on pure drift!). Always trust **contiguous temporal block CV** & **Balanced Accuracy** (and deepen your `Pipeline` + non-i.i.d. CV skills via the free [Inria/Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/) & [Probabl Certification](https://certification.probabl.ai/)).
+* **Evaluation rule:** Slicing 20s into 80%-overlapping 1s windows leaks correlated neighbors into random CV splits (`95%+` on pure drift!). Always trust **contiguous temporal block CV** & **Balanced Accuracy** (and deepen your `Pipeline` + non-i.i.d. CV skills via the free [Inria/Probabl scikit-learn MOOC](https://inria.github.io/scikit-learn-mooc/)).
 
 ---
 
