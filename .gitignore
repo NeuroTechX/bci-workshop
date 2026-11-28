@@ -17,3 +17,5 @@ beep.wav
 *.snm
 *.toc
 *.xdv
+data/*.npz
+data/*.parquet

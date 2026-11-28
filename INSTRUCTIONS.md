@@ -110,7 +110,15 @@ python exercises/03_udp_output_demo.py
 Explore how Track 01 of the **[2026 EEG/EMG Foundation Challenge](https://neural-interfaces26.github.io/)** and **[Alljoined](https://huggingface.co/datasets/Alljoined/Alljoined-1.6M)** decode visual-evoked EEG epochs (`-0.2s` to `+0.8s` @ `120 Hz`) into image embeddings (`DINOv2-giant` / `CLIP`) on CPU in 3 seconds:
 
 ```bash
+# Instant synthetic 32-ch @ 120 Hz visual-ERP benchmark:
 python exercises/05_eeg_to_image_retrieval.py
+
+# Optional: stream a compact ~20 MB real 1-subject Alljoined-1.6M shard via HTTP Range
+# (instead of downloading 6 GB; requires accepting Alljoined's CC BY-NC-SA 4.0 non-commercial terms):
+uv pip install -e ".[alljoined]"
+python streams/prepare_alljoined_shard.py --subject sub-01 --embedder clip-text --accept-nc-terms
+python exercises/05_eeg_to_image_retrieval.py --npz data/alljoined_sub01_shard.npz
+# (Pass `--embedder dinov2` to stream only the needed stimulus JPGs and match 2026 Track 01!)
 ```
 
 * Compare **Channel-Mean Ridge** (the official competition starter) against **Spatiotemporal ERP Ridge** (preserving P100/N170/P300 latency bins) on **unseen candidate images**.

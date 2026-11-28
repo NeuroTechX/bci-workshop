@@ -28,6 +28,13 @@ riemann = ["pyriemann>=0.6"]
 hardware = ["muselsl>=2.3", "bleak>=0.21", "brainflow>=5.12", "pyserial>=3.5"]
 moabb = ["moabb>=1.1", "pyriemann>=0.6", "mne>=1.6"]
 timeflux = ["timeflux>=0.15", "timeflux-dsp>=0.5", "timeflux-ui>=0.6"]
+alljoined = [
+  "pandas>=2.0",
+  "pyarrow>=15.0",
+  "pillow>=10.0",
+  "torch>=2.1",
+  "transformers>=4.40",
+]
 dev = ["pytest>=7.4", "ruff>=0.5"]
 all = [
   "mne>=1.6",

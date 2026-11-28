@@ -40,6 +40,9 @@ uv run python exercises/03_udp_output_demo.py              # in a 3rd terminal t
 
 # Bonus — CPU-fast EEG-to-Image zero-shot retrieval lab (2026 Challenge Track 01 / Alljoined style)
 uv run python exercises/05_eeg_to_image_retrieval.py
+# Or stream a ~20 MB 1-subject real Alljoined-1.6M shard via HTTP Range (no 6 GB download!):
+uv run python streams/prepare_alljoined_shard.py --subject sub-01 --accept-nc-terms
+uv run python exercises/05_eeg_to_image_retrieval.py --npz data/alljoined_sub01_shard.npz
 ```
 
 *(In 50 Hz mains regions such as Europe, Asia, Africa, and Australia, pass `--mains 50`.)*

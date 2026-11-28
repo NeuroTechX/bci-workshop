@@ -41,6 +41,7 @@ from bci_workshop.retrieval import (  # noqa: E402
     evaluate_gallery_retrieval,
     extract_visual_eeg_features,
     fit_ridge_image_decoder,
+    l2_normalize,
     simulate_visual_erp_dataset,
 )
 
@@ -114,14 +115,36 @@ def main() -> None:
     )
 
     # 2. Repeat-averaging SNR curve (single-trial vs multi-repeat pooling)
+    max_avail_repeats = int(np.max(np.unique(ids_te, return_counts=True)[1]))
+    eff_repeats = min(args.test_repeats, max_avail_repeats)
     print("\n=== 2. Repeat-Averaging SNR Scaling (Spatiotemporal-ERP-Ridge) ===")
-    repeat_grid = sorted({k for k in (1, 2, 4, 8, 16, args.test_repeats) if 1 <= k <= args.test_repeats})
+    repeat_grid = sorted({k for k in (1, 2, 4, 8, 16, eff_repeats) if 1 <= k <= eff_repeats})
     for k in repeat_grid:
         mk = evaluate_gallery_retrieval(pred_erp, ids_te, gal_emb, gal_ids, max_repeats=k, rng_seed=args.seed)
         print(
             f"  K = {k:2d} repeat(s)/image -> Top-1 = {mk.top1_acc * 100:5.1f}% | "
             f"Top-5 = {mk.top5_acc * 100:5.1f}% | Mean Rank = {mk.mean_rank:5.1f}/{mk.gallery_size}"
         )
+
+    # 3. If real THINGS/Alljoined category labels are present in the shard, show sample Top-5 retrievals!
+    if "gallery_labels" in ds and len(ds["gallery_labels"]) == len(gal_ids):
+        labels = [str(x) for x in ds["gallery_labels"]]
+        gal_norm = l2_normalize(gal_emb)
+        id_to_idx = {int(gid): idx for idx, gid in enumerate(gal_ids)}
+        print("\n=== 3. Sample Zero-Shot Unseen Concept Retrievals ===")
+        shown = 0
+        for qid in np.unique(ids_te):
+            if int(qid) not in id_to_idx:
+                continue
+            pooled = l2_normalize(pred_erp[ids_te == qid].mean(axis=0, keepdims=True))[0]
+            top5_idx = np.argsort(-(pooled @ gal_norm.T))[:5]
+            true_label = labels[id_to_idx[int(qid)]]
+            top5_labels = [labels[i] for i in top5_idx]
+            hit = "HIT" if true_label in top5_labels else "miss"
+            print(f"  [{hit:4s}] Viewed '{true_label:16s}' -> Top-5 EEG retrievals: {top5_labels}")
+            shown += 1
+            if shown >= 5:
+                break
 
     print(
         "\n=== Going Further with Real Data & Generative Reconstruction ===\n"

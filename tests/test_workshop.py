@@ -174,3 +174,56 @@ def test_eeg_to_image_retrieval_and_repeat_snr_scaling() -> None:
     assert m_erp_16.top5_acc > m_mean.top5_acc + 0.25
     assert m_erp_16.top5_acc > m_erp_1.top5_acc + 0.20
     assert m_erp_16.top5_acc > 0.65
+
+
+def test_prepare_alljoined_shard_header_and_npz_roundtrip(tmp_path: pathlib.Path) -> None:
+    import importlib.util
+    import pickle
+
+    spec = importlib.util.spec_from_file_location(
+        "prepare_alljoined_shard", ROOT / "streams" / "prepare_alljoined_shard.py"
+    )
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    # Verify Pickle-5 BINBYTES8 header parser & exact row-count guard
+    fake_arr = np.zeros((5, 32, 250), dtype=np.float64)
+    blob = pickle.dumps({"preprocessed_eeg_data": fake_arr, "ch_names": mod.ALLJOINED_32_CHANNELS}, protocol=5)
+    offset, n_bytes = mod.parse_pickle5_binbytes8_header(blob[:256], expected_rows=5, n_channels=32, n_times=250)
+    assert n_bytes == 5 * 32 * 250 * 8
+    recovered = np.frombuffer(blob[offset : offset + n_bytes], dtype="<f8").reshape(5, 32, 250)
+    assert np.allclose(recovered, fake_arr)
+    with pytest.raises(ValueError):
+        mod.parse_pickle5_binbytes8_header(blob[:256], expected_rows=6, n_channels=32, n_times=250)
+
+    # Verify zero-PyTorch category-svd embedder & Exercise 05 `--npz` roundtrip with gallery_labels
+    items = [
+        ("a.jpg", "pug", "animals"),
+        ("b.jpg", "bulldog", "animals"),
+        ("c.jpg", "airplane", "vehicles"),
+        ("d.jpg", "helicopter", "vehicles"),
+        ("e.jpg", "broccoli", "foods_and_plants"),
+        ("f.jpg", "jukebox", "household_items_and_furniture"),
+    ]
+    emb_map = mod.build_category_svd_embeddings(items, embed_dim=8)
+    assert len(emb_map) == 6
+    assert np.isclose(np.linalg.norm(emb_map["a.jpg"]), 1.0, atol=1e-5)
+
+    ds = simulate_visual_erp_dataset(
+        n_train_images=40, n_test_images=12, train_repeats=2, test_repeats=4, embed_dim=16, seed=3
+    )
+    npz_file = tmp_path / "mini_shard.npz"
+    np.savez_compressed(
+        npz_file,
+        **ds,
+        gallery_labels=np.array([f"concept_{i:02d}" for i in range(12)], dtype="U24"),
+    )
+    res = subprocess.run(
+        [sys.executable, str(ROOT / "exercises" / "05_eeg_to_image_retrieval.py"), "--npz", str(npz_file)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "Sample Zero-Shot Unseen Concept Retrievals" in res.stdout
+    assert "concept_" in res.stdout
